@@ -73,6 +73,6 @@ Informative and social media app that allows users to post discounts and promos 
 * Map screen
    * → None
 * Camera scanner
-* * → None
+   * → None
 * Post
-* * → None
+   * → None
