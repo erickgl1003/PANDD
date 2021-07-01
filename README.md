@@ -56,13 +56,13 @@ Informative and social media app that allows users to post discounts and promos 
 
 ## Navigation
 
-# Tab Navigation (Tab to Screen)
+### Tab Navigation (Tab to Screen)
 
 * Home
 * Map screen
 * Camera screen
 
-#Flow Navigation (Screen to Screen)
+### Flow Navigation (Screen to Screen)
 
 * Login screen
    * → Home
