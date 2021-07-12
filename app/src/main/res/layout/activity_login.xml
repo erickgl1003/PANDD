@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/color"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LoginActivity">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="-50dp"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/ivLogo"
+            android:layout_width="250dp"
+            android:layout_height="100dp"
+            android:src="@drawable/ic_launcher_background"
+            />
+
+        <EditText
+            android:id="@+id/etUsername"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/ivLogo"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="50dp"
+            android:ems="10"
+            android:gravity="center"
+            android:hint="Username" />
+
+        <EditText
+            android:id="@+id/etPassword"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/etUsername"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="10dp"
+            android:ems="10"
+            android:gravity="center"
+            android:hint="Password"
+            android:inputType="textPassword" />
+
+        <Button
+            android:id="@+id/btnLogin"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/etPassword"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:text="Login" />
+
+        <TextView
+            android:id="@+id/tvSign"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/btnLogin"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_vertical"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:text="Don't have an account? Click here to sign up!"
+            android:textColor="#008AC8"
+
+            />
+    </RelativeLayout>
+
+</RelativeLayout>
