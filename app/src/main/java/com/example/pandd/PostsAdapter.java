@@ -7,6 +7,7 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,9 @@ import java.util.List;
 public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> {
     protected Context context;
     protected List<Post> posts;
+
+    private int primaryColor;
+
 
     public PostsAdapter(Context context, List<Post> posts) {
         this.context = context;
@@ -55,6 +59,12 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_post, parent, false);
+
+        //Get primary color from theme
+        TypedValue typedValue = new TypedValue();
+        context.getTheme().resolveAttribute(R.attr.colorPrimary, typedValue, true);
+        primaryColor = typedValue.data;
+
         return new ViewHolder(view);
     }
 
@@ -96,25 +106,19 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             String product = "Product: " + post.getProduct();
             String barcode = "Barcode: " + post.getBarcode();
 
-            Spannable spannableStore = new SpannableString(store);
-            spannableStore.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD),2,store.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
+            Spannable spannableStore = customize(store, 2, store.length());
             tvStore.setText(spannableStore, TextView.BufferType.SPANNABLE);
             tvDescription.setText(description);
             tvUsername.setText(username);
 
             if(post.getProduct() != null) {
-                Spannable spannableProduct = new SpannableString(product);
-                spannableProduct.setSpan(new ForegroundColorSpan(Color.BLACK),8,product.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
+                Spannable spannableProduct = customize(product, 8, product.length());
                 tvProduct.setText(spannableProduct, TextView.BufferType.SPANNABLE);
                 tvProduct.setVisibility(View.VISIBLE);
             }
 
             if(post.getBarcode() != null) {
-                Spannable spannableBarcode = new SpannableString(barcode);
-                spannableBarcode.setSpan(new ForegroundColorSpan(Color.BLACK),8,barcode.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
+                Spannable spannableBarcode = customize(barcode,8,barcode.length());
                 tvBarcode.setText(spannableBarcode, TextView.BufferType.SPANNABLE);
                 tvBarcode.setVisibility(View.VISIBLE);
             }
@@ -145,4 +149,12 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
 
         }
     }
+
+    private Spannable customize(String text, int start, int end){
+        Spannable spannableText = new SpannableString(text);
+        spannableText.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD),start,end,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableText.setSpan(new ForegroundColorSpan(primaryColor),start,end,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return spannableText;
+    }
+
 }

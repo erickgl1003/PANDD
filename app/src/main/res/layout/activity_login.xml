@@ -18,9 +18,11 @@
 
         <ImageView
             android:id="@+id/ivLogo"
-            android:layout_width="250dp"
+            android:layout_width="wrap_content"
             android:layout_height="100dp"
-            android:src="@drawable/ic_launcher_background"
+            android:src="@drawable/logo"
+            android:gravity="center"
+            android:layout_centerHorizontal="true"
             />
 
         <EditText
@@ -30,7 +32,7 @@
             android:layout_below="@id/ivLogo"
             android:layout_centerHorizontal="true"
             android:layout_gravity="center_vertical"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="0dp"
             android:ems="10"
             android:gravity="center"
             android:hint="Username" />
@@ -52,6 +54,7 @@
             android:id="@+id/btnLogin"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
+            android:textColor="@color/white"
             android:layout_below="@id/etPassword"
             android:layout_centerHorizontal="true"
             android:layout_gravity="center_vertical"
@@ -69,6 +72,7 @@
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"
+            android:layout_marginTop="10dp"
             android:text="Don't have an account? Click here to sign up!"
             android:textColor="#008AC8"
 

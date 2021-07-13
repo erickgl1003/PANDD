@@ -9,7 +9,7 @@
         android:iconTint="@android:color/black"
         android:orderInCategory="100"
         android:title="logout"
-        app:iconTint="@color/black"
+        app:iconTint="@color/white"
         app:showAsAction="always" />
 
 </menu>
