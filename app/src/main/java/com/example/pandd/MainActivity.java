@@ -31,10 +31,10 @@ public class MainActivity extends AppCompatActivity {
 
         // define your fragments here
         final Fragment fragment1 = new HomeFragment();
-        //final Fragment fragment2 = new PostFragment();
-        //final Fragment fragment3 = new ProfileFragment();
+        //final Fragment fragment2 = new ProfileFragment();
+        final Fragment fragment3 = new PostFragment();
 
-        //final Fragment fragment2 = new SecondFragment();
+
 
         fragmentManager.beginTransaction().replace(R.id.flContainer, fragment1).commit();
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
@@ -52,9 +52,8 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.post:
                     default:
-                        fragment = fragment1;
+                        fragment = fragment3;
                         break;
-
                 }
                 fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
                 return true;

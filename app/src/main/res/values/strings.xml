@@ -9,4 +9,6 @@
     <string name="confirm_password">Confirm password</string>
     <string name="upload_profile_picture">Upload profile picture</string>
     <string name="signup">Signup</string>
+    <string name="promo_and_or_discount_description">Promo and/or discount description</string>
+    <string name="upload_image">Upload image</string>
 </resources>

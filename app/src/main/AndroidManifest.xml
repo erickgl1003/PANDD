@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
+
     <application
         android:name=".ParseApplication"
         android:allowBackup="true"
@@ -13,7 +14,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PANDD">
-        <activity android:name=".SignupActivity"></activity>
+        <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyDJ3olO_dD1oGRywV3jPUumcFF12KgXJIM"/>
+
+        <activity android:name=".SignupActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".LoginActivity">
             <intent-filter>

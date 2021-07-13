@@ -84,6 +84,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
+        android:layout_marginBottom="5dp"
         android:textAlignment="textEnd"
         tools:text="time" />
 </LinearLayout>
