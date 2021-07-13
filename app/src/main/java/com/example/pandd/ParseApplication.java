@@ -3,6 +3,7 @@ package com.example.pandd;
 import android.app.Application;
 
 import com.example.pandd.models.Post;
+import com.example.pandd.models.Store;
 import com.parse.Parse;
 import com.parse.ParseObject;
 
@@ -13,6 +14,7 @@ public class ParseApplication extends Application {
 
         // Register your parse models
         ParseObject.registerSubclass(Post.class);
+        ParseObject.registerSubclass(Store.class);
 
         //ParseObject.registerSubclass(Post.class);
         Parse.initialize(new Parse.Configuration.Builder(this)
