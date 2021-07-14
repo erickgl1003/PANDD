@@ -99,6 +99,9 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             tvProduct = itemView.findViewById(R.id.tvProduct);
         }
         public void bind(Post post, int position) {
+            tvBarcode.setVisibility(View.GONE);
+            ivImage.setVisibility(View.GONE);
+
             ParseUser author = post.getUser();
             String username = author.getUsername();
             String description = post.getDescription();
@@ -122,6 +125,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
                 tvBarcode.setText(spannableBarcode, TextView.BufferType.SPANNABLE);
                 tvBarcode.setVisibility(View.VISIBLE);
             }
+
 
             Date createdAt = post.getCreatedAt();
             String timeAgo = Post.calculateTimeAgo(createdAt);

@@ -3,10 +3,17 @@ package com.example.pandd;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +24,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 
@@ -29,11 +37,18 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.mlkit.vision.barcode.Barcode;
+import com.google.mlkit.vision.barcode.BarcodeScanner;
+import com.google.mlkit.vision.barcode.BarcodeScanning;
+import com.google.mlkit.vision.common.InputImage;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -51,8 +66,10 @@ import java.util.Arrays;
 import java.util.List;
 
 public class PostFragment extends Fragment implements OnMapReadyCallback {
+
     public static final String TAG = "PostFragment";
     private static final int UPLOAD_REQUEST = 50;
+    private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 42;;
 
     private TextView tvBarcode;
     private EditText etDescription;
@@ -70,6 +87,11 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
     private boolean locationFilled = false;
     String barcode = "";
 
+    File photoFile;
+    public String photoFileName = "photo.jpg";
+
+    private int primaryColor;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
@@ -85,9 +107,9 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
                 getChildFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+
         // Specify the types of place data to return.
         autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS));
 
@@ -121,10 +143,14 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
         btnSubmit = view.findViewById(R.id.btnSubmit);
         btnScan = view.findViewById(R.id.btnScan);
 
+        TypedValue typedValue = new TypedValue();
+        getActivity().getTheme().resolveAttribute(R.attr.colorPrimary, typedValue, true);
+        primaryColor = typedValue.data;
+
         btnScan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                scan();
+                launchCamera();
             }
         });
 
@@ -159,9 +185,79 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
         });
     }
 
+    private void launchCamera() {
+        // create Intent to take a picture and return control to the calling application
+
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Create a File reference for future access
+        photoFile = getPhotoFileUri(photoFileName);
+
+        Uri fileProvider = FileProvider.getUriForFile(getActivity(), "com.codepath.fileprovider", photoFile);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
+
+        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+            // Start the image capture intent to take photo
+            startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+        }
+    }
+
+    private File getPhotoFileUri(String fileName) {
+        File mediaStorageDir = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), TAG);
+
+        // Create the storage directory if it does not exist
+        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){
+            Log.d(TAG, "failed to create directory");
+        }
+
+        // Return the file target for the photo based on filename
+        return new File(mediaStorageDir.getPath() + File.separator + fileName);
+    }
+
 
     //TODO Scan feature
-    private void scan() {
+    private void scan(Bitmap takenImage) {
+        InputImage image = InputImage.fromBitmap(takenImage, 0);
+        BarcodeScanner scanner = BarcodeScanning.getClient();
+
+        Task<List<Barcode>> result = scanner.process(image)
+                .addOnSuccessListener(new OnSuccessListener<List<Barcode>>() {
+                    @Override
+                    public void onSuccess(List<Barcode> barcodes) {
+                        if(barcodes.size() == 0){
+                            Toast.makeText(getActivity(),"No barcode detected",Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        if(barcodes.size() > 1){
+                            Toast.makeText(getActivity(),"There's more than 1 barcode! Be sure to only scan one barcode per post",Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                        Barcode barcodeScanned = barcodes.get(0);
+                        String rawValue = barcodeScanned.getRawValue();
+                        int valueType = barcodeScanned.getValueType();
+
+                        if(valueType != Barcode.TYPE_PRODUCT && valueType != Barcode.TYPE_TEXT ){
+                            Toast.makeText(getActivity(),"That's not a code product barcode! Be sure to scan only valid barcodes",Toast.LENGTH_LONG).show();
+                            Log.i(TAG, String.valueOf(valueType));
+                            return;
+                        }
+
+                        barcode = rawValue;
+
+                        if(!barcode.equals("")){
+                            String barcodeText = "Barcode: " + barcode;
+                            Spannable spannable = customize(barcodeText,8,barcodeText.length());
+                            tvBarcode.setText(spannable, TextView.BufferType.SPANNABLE);
+                            tvBarcode.setVisibility(View.VISIBLE);
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getActivity(),e.getMessage(),Toast.LENGTH_LONG).show();
+                    }
+                });
+
     }
 
     public void onUploadPhoto(){
@@ -213,6 +309,36 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
                 Log.e(getClass().getSimpleName(), "Error writing bitmap", e);
             }
         }
+
+        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
+                takenImage = getResizedBitmap(takenImage);
+                scan(takenImage);
+
+
+            } else {
+                Toast.makeText(getActivity(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+    }
+
+    public Bitmap getResizedBitmap(Bitmap bm) {
+        int width = bm.getWidth();
+        int height = bm.getHeight();
+        int newWidth = width/2;
+        int newHeight = height/2;
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+        // CREATE A MATRIX FOR THE MANIPULATION
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleWidth, scaleHeight);
+
+        // "RECREATE" THE NEW BITMAP
+        Bitmap resizedBitmap = Bitmap.createBitmap(
+                bm, 0, 0, width, height, matrix, false);
+        return resizedBitmap;
     }
 
     private void savePost(String description, String product, String code, Place place, ParseUser currentUser, File photoFile) {
@@ -269,6 +395,13 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
             Toast.makeText(getActivity(),"Error querying: " + e.getMessage(),Toast.LENGTH_LONG).show();
         }
         return null;
+    }
+
+    public Spannable customize(String text, int start, int end){
+        Spannable spannableText = new SpannableString(text);
+        spannableText.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD),start,end,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableText.setSpan(new ForegroundColorSpan(primaryColor),start,end,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return spannableText;
     }
 
 }
