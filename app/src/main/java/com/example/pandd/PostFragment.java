@@ -2,10 +2,13 @@ package com.example.pandd;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -31,6 +34,8 @@ import androidx.fragment.app.Fragment;
 import com.example.pandd.models.Post;
 import com.example.pandd.models.Store;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -67,7 +72,7 @@ import java.util.List;
 
 public class PostFragment extends Fragment implements OnMapReadyCallback {
 
-    public static final String TAG = "PostFragment";
+    public static final String TAG = "PANDD";
     private static final int UPLOAD_REQUEST = 50;
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 42;;
 
@@ -91,6 +96,9 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
     public String photoFileName = "photo.jpg";
 
     private int primaryColor;
+
+
+
 
 
     @Override
@@ -136,6 +144,8 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
+
         tvBarcode = view.findViewById(R.id.tvBarcode);
         etDescription = view.findViewById(R.id.etDescription);
         etProduct = view.findViewById(R.id.etProduct);
@@ -150,14 +160,14 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
         btnScan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                launchCamera();
+                onUploadPhoto(CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
             }
         });
 
         btnCaptureImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onUploadPhoto();
+                onUploadPhoto(UPLOAD_REQUEST);
             }
         });
 
@@ -186,12 +196,8 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void launchCamera() {
-        // create Intent to take a picture and return control to the calling application
-
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Create a File reference for future access
         photoFile = getPhotoFileUri(photoFileName);
-
         Uri fileProvider = FileProvider.getUriForFile(getActivity(), "com.codepath.fileprovider", photoFile);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
 
@@ -213,8 +219,6 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
         return new File(mediaStorageDir.getPath() + File.separator + fileName);
     }
 
-
-    //TODO Scan feature
     private void scan(Bitmap takenImage) {
         InputImage image = InputImage.fromBitmap(takenImage, 0);
         BarcodeScanner scanner = BarcodeScanning.getClient();
@@ -260,9 +264,9 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
 
     }
 
-    public void onUploadPhoto(){
+    public void onUploadPhoto(int requestCode){
         Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(i, UPLOAD_REQUEST);
+        startActivityForResult(i, requestCode);
     }
 
     @Override
@@ -280,7 +284,7 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
 
         mMap.addMarker(markerOptions);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(place.getLatLng()));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(13));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(16));
     }
 
     @Override
@@ -312,12 +316,32 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
 
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
-                Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
-                takenImage = getResizedBitmap(takenImage);
-                scan(takenImage);
-
+                Uri photoUri = data.getData();
+                bitmap = null;
+                try {
+                    bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), photoUri);
+                }catch (FileNotFoundException e){
+                    e.printStackTrace();
+                    Log.e(TAG, "File not found");
+                } catch (IOException e){
+                    Log.d(TAG, e.getLocalizedMessage());
+                }
+                File testDir = getActivity().getApplicationContext().getFilesDir();
+                imagT = new File(testDir, "photo.jpg");
+                OutputStream os;
+                try {
+                    os = new FileOutputStream(imagT);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os);
+                    bitmap = getResizedBitmap(bitmap);
+                    scan(bitmap);
+                    os.flush();
+                    os.close();
+                } catch (Exception e) {
+                    Log.e(getClass().getSimpleName(), "Error writing bitmap", e);
+                }
 
             } else {
+                Log.i(TAG, String.valueOf(requestCode));
                 Toast.makeText(getActivity(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
             }
         }
@@ -373,6 +397,7 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
 
     private ParseObject getStore(Place place) {
 
+
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Store");
         query.whereEqualTo("mapId",place.getId());
         try {
@@ -382,6 +407,8 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
                 store.setName(place.getName());
                 store.setAddress(place.getAddress());
                 store.setMapId(place.getId());
+                store.setLat(place.getLatLng().latitude);
+                store.setLong(place.getLatLng().longitude);
                 try {
                     store.save();
                     objects.add(store);

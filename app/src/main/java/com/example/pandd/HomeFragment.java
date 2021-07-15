@@ -1,10 +1,12 @@
 package com.example.pandd;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -21,12 +23,15 @@ import com.parse.ParseQuery;
 import java.util.ArrayList;
 import java.util.List;
 
+import im.delight.android.location.SimpleLocation;
+
 public class HomeFragment extends Fragment {
     protected PostsAdapter adapter;
     protected List<Post> allPosts;
     protected RecyclerView rvPosts;
     public static final String TAG = "FeedActivity";
     protected SwipeRefreshLayout swipeContainer;
+    private SimpleLocation location;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
@@ -37,14 +42,23 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Context context = getActivity();
+
+        location = new SimpleLocation(context);
+
+        if (!location.hasLocationEnabled()) {
+            SimpleLocation.openSettings(context);
+        }
+
+
         rvPosts = view.findViewById(R.id.rvPosts);
 
         allPosts = new ArrayList<>();
-        adapter = new PostsAdapter(getActivity(), allPosts);
+        adapter = new PostsAdapter(context, allPosts,location.getLatitude(),location.getLongitude());
 
-        rvPosts.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rvPosts.setLayoutManager(new LinearLayoutManager(context));
         rvPosts.setAdapter(adapter);
-        rvPosts.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
+        rvPosts.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
 
         queryPosts();
 
@@ -55,7 +69,7 @@ public class HomeFragment extends Fragment {
             public void onRefresh() {
                 adapter.clear();
                 queryPosts();
-                adapter.addAll(allPosts);
+                adapter.addAll(allPosts,location.getLatitude(),location.getLongitude());
                 swipeContainer.setRefreshing(false);
             }
         });
@@ -89,5 +103,17 @@ public class HomeFragment extends Fragment {
                 adapter.notifyDataSetChanged();
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        location.beginUpdates();
+    }
+
+    @Override
+    public void onPause() {
+        location.endUpdates();
+        super.onPause();
     }
 }

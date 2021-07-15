@@ -19,7 +19,10 @@ public class Post extends ParseObject {
     public static final String KEY_PRODUCT = "product";
 
 
+
     public Post(){}
+
+
 
     public String getDescription() {
         return getString(KEY_DESCRIPTION);
