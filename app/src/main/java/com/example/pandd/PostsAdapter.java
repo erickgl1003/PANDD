@@ -129,8 +129,10 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             String result = calculateDistance(post);
             tvDistance.setText(result + "away from you");
 
-            //Set the optional fields (if they aren't null)
-            tvProduct = setTextView(post.getProduct(),tvProduct);
+            //Set the product and barcode (if they aren't null)
+            String product = post.getProduct();
+            product = product.substring(0,1).toUpperCase() + product.substring(1);
+            tvProduct = setTextView(product,tvProduct);
             tvBarcode = setTextView(post.getBarcode(),tvBarcode);
 
             //Set post timeAgo stamp

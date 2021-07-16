@@ -367,7 +367,7 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
         Post post = new Post();
         post.setDescription(description);
         post.setUser(currentUser);
-        post.setProduct(product);
+        post.setProduct(product.toLowerCase());
         post.setStore(getStore(place));
 
         //Optional fields

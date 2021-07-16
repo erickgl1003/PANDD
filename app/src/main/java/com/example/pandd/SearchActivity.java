@@ -64,7 +64,7 @@ public class SearchActivity extends AppCompatActivity {
         query.include(Post.KEY_STORE);
         query.setLimit(20);
         query.addDescendingOrder("createdAt");
-        query.whereContains("product",product);
+        query.whereContains("product",product.toLowerCase());
 
         query.findInBackground(new FindCallback<Post>() {
             @Override
@@ -74,9 +74,10 @@ public class SearchActivity extends AppCompatActivity {
                     return;
                 }
                 if(posts.size() == 0){
-                    Toast.makeText(SearchActivity.this,"No posts contain said proudct",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SearchActivity.this,"No posts contain said product",Toast.LENGTH_SHORT).show();
+                    finish();
+                    return;
                 }
-
                 allPosts.addAll(posts);
                 adapter.notifyDataSetChanged();
             }
