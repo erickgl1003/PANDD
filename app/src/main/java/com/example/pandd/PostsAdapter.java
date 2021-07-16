@@ -1,48 +1,25 @@
 package com.example.pandd;
 
-import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.location.Location;
-import android.media.browse.MediaBrowser;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-import androidx.activity.result.contract.ActivityResultContract;
-import java.lang.Object;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.pandd.models.Post;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.maps.android.SphericalUtil;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
-
-import org.jetbrains.annotations.NotNull;
-import org.w3c.dom.Text;
 
 import java.util.Date;
 import java.util.List;
@@ -54,7 +31,6 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
     protected List<Post> posts;
 
     private int primaryColor;
-    private FusedLocationProviderClient fusedLocationClient;
 
     private double userLat;
     private double userLong;
@@ -91,25 +67,20 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_post, parent, false);
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
-
         //Get primary color from theme
         TypedValue typedValue = new TypedValue();
         context.getTheme().resolveAttribute(R.attr.colorPrimary, typedValue, true);
         primaryColor = typedValue.data;
-
-
 
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        //Bind every post to the recyclerView
         Post post = posts.get(position);
         holder.bind(post, position);
-
     }
-
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -138,74 +109,72 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
         }
 
         public void bind(Post post, int position) {
+            //Sets both optional values as GONE, so they don't take space in the post.
             tvBarcode.setVisibility(View.GONE);
             ivImage.setVisibility(View.GONE);
 
-            LatLng storell = new LatLng(post.getStore().getDouble("lat"), post.getStore().getDouble("long"));
-
-            Log.i("Adapter",String.valueOf(storell.latitude) + " " + String.valueOf(storell.longitude)  + " " + String.valueOf(userLat)  + " " + String.valueOf(userLong));
-
-            double dist = SimpleLocation.calculateDistance(storell.latitude, storell.longitude, userLat, userLong);
-
+            //Get all the info for the post
             ParseUser author = post.getUser();
             String username = author.getUsername();
             String description = post.getDescription();
             String store = "at " + post.getStore().getString("name");
-            String product = "Product: " + post.getProduct();
-            String barcode = "Barcode: " + post.getBarcode();
 
+            //Set the store, description and username text
             Spannable spannableStore = customize(store, 2, store.length());
             tvStore.setText(spannableStore, TextView.BufferType.SPANNABLE);
             tvDescription.setText(description);
             tvUsername.setText(username);
-            String units = " m ";
-            if(dist >= 1000){
-                dist /= 1000;
-                units = " km ";
-            }
-            String result = String.format("%.2f", dist);
-            tvDistance.setText(result + units +"away from you");
 
-            if(post.getProduct() != null) {
-                Spannable spannableProduct = customize(product, 8, product.length());
-                tvProduct.setText(spannableProduct, TextView.BufferType.SPANNABLE);
-                tvProduct.setVisibility(View.VISIBLE);
-            }
+            //Calculate distance between user and post's store
+            String result = calculateDistance(post);
+            tvDistance.setText(result + "away from you");
 
-            if(post.getBarcode() != null) {
-                Spannable spannableBarcode = customize(barcode,8,barcode.length());
-                tvBarcode.setText(spannableBarcode, TextView.BufferType.SPANNABLE);
-                tvBarcode.setVisibility(View.VISIBLE);
-            }
+            //Set the optional fields (if they aren't null)
+            tvProduct = setTextView(post.getProduct(),tvProduct);
+            tvBarcode = setTextView(post.getBarcode(),tvBarcode);
 
-
+            //Set post timeAgo stamp
             Date createdAt = post.getCreatedAt();
             String timeAgo = Post.calculateTimeAgo(createdAt);
-
             tvTime.setText(timeAgo);
 
+            //Set user's profile picture
             ParseFile profile = (ParseFile) author.getParseFile("profile");
             if (profile != null) {
                 Glide.with(context).load(profile.getUrl()).apply(RequestOptions.circleCropTransform()).into(ivProfile);
             }
 
+            //Sets post's image (if it has any)
             ParseFile image = post.getImage();
             if (image != null) {
                 Glide.with(context).load(image.getUrl()).into(ivImage);
                 ivImage.setVisibility(View.VISIBLE);
             }
-
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                }
-            });
-
-
         }
     }
 
+    private TextView setTextView(String postText, TextView textView) {
+        if(postText != null) {
+            String textField = "Product: " + postText;
+            Spannable spannableProduct = customize(textField, 8, textField.length());
+            textView.setText(spannableProduct, TextView.BufferType.SPANNABLE);
+            textView.setVisibility(View.VISIBLE);
+        }
+        return textView;
+    }
+
+    private String calculateDistance(Post post) {
+        LatLng storell = new LatLng(post.getStore().getDouble("lat"), post.getStore().getDouble("long"));
+
+        double dist = SimpleLocation.calculateDistance(storell.latitude, storell.longitude, userLat, userLong);
+
+        String units = " m ";
+        if(dist >= 1000){
+            dist /= 1000;
+            units = " km ";
+        }
+        return String.format("%.2f", dist) + units;
+    }
 
 
     private Spannable customize(String text, int start, int end){

@@ -2,13 +2,11 @@ package com.example.pandd;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -30,12 +28,9 @@ import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
-
 import com.example.pandd.models.Post;
 import com.example.pandd.models.Store;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -54,7 +49,6 @@ import com.google.mlkit.vision.barcode.Barcode;
 import com.google.mlkit.vision.barcode.BarcodeScanner;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.common.InputImage;
-import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
@@ -97,17 +91,21 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
 
     private int primaryColor;
 
-
-
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
 
         View rootView =  inflater.inflate(R.layout.activity_post, parent, false);
 
-        //Initialize the Places class
-        Places.initialize(getActivity().getApplicationContext(), "AIzaSyDJ3olO_dD1oGRywV3jPUumcFF12KgXJIM");
+        //Initialize the Places class using the context from this fragment and the Maps API Key
+        ApplicationInfo ai = null;
+        try {
+            ai = getActivity().getPackageManager().getApplicationInfo(getActivity().getPackageName(),PackageManager.GET_META_DATA);
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.e(TAG,e.getMessage());
+            e.printStackTrace();
+        }
+        assert ai != null;
+        Places.initialize(getActivity().getApplicationContext(), ai.metaData.getString("com.google.android.geo.API_KEY"));
         PlacesClient placesClient = Places.createClient(getActivity());
 
         //Get and initialize the supportMapFragment class
@@ -395,9 +393,8 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
         });
     }
 
+    //TODO: Use Google api function to retrieve real distance between locations
     private ParseObject getStore(Place place) {
-
-
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Store");
         query.whereEqualTo("mapId",place.getId());
         try {

@@ -2,6 +2,7 @@ package com.example.pandd;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 import android.content.Intent;
@@ -83,7 +84,6 @@ public class SignupActivity extends AppCompatActivity {
                     return;
                 }
                 signUser(username, password, email,  imagT);
-
             }
         });
 
@@ -106,12 +106,10 @@ public class SignupActivity extends AppCompatActivity {
         return false;
     }
 
-
     public void onUploadPhoto(){
         Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(i, UPLOAD_REQUEST);
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -125,8 +123,13 @@ public class SignupActivity extends AppCompatActivity {
             }catch (FileNotFoundException e){
                 e.printStackTrace();
                 Log.e(TAG, "File not found");
+                Toast.makeText(SignupActivity.this,"File not found. Using default user profile picture",Toast.LENGTH_LONG).show();
+                bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.user);
+
             } catch (IOException e){
-                Log.d(TAG, e.getLocalizedMessage());
+                Log.e(TAG, e.getLocalizedMessage());
+                Toast.makeText(SignupActivity.this,"Error getting the image. Using default user profile picture",Toast.LENGTH_LONG).show();
+                bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.user);
             }
             File testDir = getApplicationContext().getFilesDir();
             imagT = new File(testDir, "photo.jpg");
@@ -138,6 +141,7 @@ public class SignupActivity extends AppCompatActivity {
                 os.close();
                 btnSignup.setVisibility(View.VISIBLE);
             } catch (Exception e) {
+                Toast.makeText(SignupActivity.this,e.getMessage(),Toast.LENGTH_LONG).show();
                 Log.e(getClass().getSimpleName(), "Error writing bitmap", e);
             }
         }
@@ -154,13 +158,12 @@ public class SignupActivity extends AppCompatActivity {
             @Override
             public void done(ParseException e) {
                 if(e == null){
-                    Log.d(TAG, "Signed up successfully");
                     ParseUser curr = ParseUser.getCurrentUser();
                     savePhoto(curr, new ParseFile(file));
-
                 }
                 else{
                     Toast.makeText(SignupActivity.this,e.getMessage(),Toast.LENGTH_LONG).show();
+                    Log.e(TAG, "Error signing user:" + e.getMessage() + "\n" + e.getCause());
                 }
             }
         });
@@ -172,11 +175,11 @@ public class SignupActivity extends AppCompatActivity {
             @Override
             public void done(ParseException e) {
                 if(e == null){
-                    Log.d(TAG, "Saved photo");
                     goMainAcitivty();
                 }
                 else{
-                    Log.d(TAG, "Error saving photo:" + e.getMessage() + "\n" + e.getCause());
+                    Toast.makeText(SignupActivity.this, e.getMessage(),Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Error saving photo:" + e.getMessage() + "\n" + e.getCause());
                 }
             }
         });

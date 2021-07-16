@@ -18,11 +18,7 @@ public class Post extends ParseObject {
     public static final String KEY_BARCODE = "barcode";
     public static final String KEY_PRODUCT = "product";
 
-
-
     public Post(){}
-
-
 
     public String getDescription() {
         return getString(KEY_DESCRIPTION);
@@ -98,7 +94,6 @@ public class Post extends ParseObject {
             Log.i("Error:", "getRelativeTimeAgo failed", e);
             e.printStackTrace();
         }
-
         return "";
     }
 }

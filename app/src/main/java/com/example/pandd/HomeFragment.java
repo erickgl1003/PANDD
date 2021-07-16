@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -14,7 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.example.pandd.PostsAdapter;
 import com.example.pandd.models.Post;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -43,6 +41,8 @@ public class HomeFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         Context context = getActivity();
+
+        //Add comments here.
 
         location = new SimpleLocation(context);
 

@@ -29,17 +29,14 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         if(ParseUser.getCurrentUser() != null){
-            goMainAcitivty();
+            goMainActivity();
         }
-
-
 
         etUsername = findViewById(R.id.etUsername);
         etPassword = findViewById(R.id.etPassword);
         btnLogin = findViewById(R.id.btnLogin);
         tvSign = findViewById(R.id.tvSign);
         btnLogin.setOnClickListener(new View.OnClickListener(){
-
             @Override
             public void onClick(View v) {
                 Log.i(TAG,"onClick Login Button");
@@ -81,12 +78,12 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 Toast.makeText(LoginActivity.this,"Success!",Toast.LENGTH_SHORT);
-                goMainAcitivty();
+                goMainActivity();
             }
         });
     }
 
-    private void goMainAcitivty() {
+    private void goMainActivity() {
         Intent i = new Intent(this,MainActivity.class);
         startActivity(i);
         finish();
