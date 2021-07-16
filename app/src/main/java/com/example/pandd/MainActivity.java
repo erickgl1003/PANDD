@@ -75,6 +75,11 @@ public class MainActivity extends AppCompatActivity {
                 finish();
                 return true;
             }
+            if (item.getItemId() == R.id.search) {
+                // navigate backwards to Login screen
+                onSearchRequested();
+                return true;
+            }
 
             return super.onOptionsItemSelected(item);
         }

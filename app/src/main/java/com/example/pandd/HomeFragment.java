@@ -27,7 +27,7 @@ public class HomeFragment extends Fragment {
     protected PostsAdapter adapter;
     protected List<Post> allPosts;
     protected RecyclerView rvPosts;
-    public static final String TAG = "FeedActivity";
+    public static final String TAG = "HomeFragment";
     protected SwipeRefreshLayout swipeContainer;
     private SimpleLocation location;
 

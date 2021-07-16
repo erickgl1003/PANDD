@@ -9,12 +9,6 @@
 
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/map"
-        android:enabled="true"
-        android:icon="@drawable/map"
-        android:title="@string/post"
-        app:showAsAction="ifRoom" />
-    <item
         android:id="@+id/post"
         android:enabled="true"
         android:icon="@drawable/post"
