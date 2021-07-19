@@ -39,31 +39,28 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         Context context = getActivity();
 
-        //Add comments here.
+        //Ask for camera permissions:
 
+
+        //Initialize SimpleLocation and request permissions to get the user actual location
         location = new SimpleLocation(context);
-
         if (!location.hasLocationEnabled()) {
             SimpleLocation.openSettings(context);
         }
 
-
+        //Set up the recyclerView to show the posts
         rvPosts = view.findViewById(R.id.rvPosts);
-
         allPosts = new ArrayList<>();
         adapter = new PostsAdapter(context, allPosts,location.getLatitude(),location.getLongitude());
-
         rvPosts.setLayoutManager(new LinearLayoutManager(context));
         rvPosts.setAdapter(adapter);
         rvPosts.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
-
         queryPosts();
 
+        //Set up the swipeContainer that allows the user to refresh the posts.
         swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
-
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -74,16 +71,11 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
+        swipeContainer.setColorSchemeResources(android.R.color.holo_red_dark,
                 android.R.color.holo_red_light);
-
-
     }
 
     protected void queryPosts() {
-
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
 
         query.include(Post.KEY_USER);

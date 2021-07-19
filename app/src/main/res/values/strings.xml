@@ -16,4 +16,5 @@
     <string name="product_featured_in_promo_discount">Product featured in promo/discount</string>
     <string name="app_label">PANDD</string>
     <string name="search_hint">Search by product...</string>
+    <string name="take_photo">Take photo</string>
 </resources>

@@ -1,10 +1,13 @@
 package com.example.pandd;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Camera;
 import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
@@ -25,6 +28,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
@@ -142,8 +146,6 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
-
         tvBarcode = view.findViewById(R.id.tvBarcode);
         etDescription = view.findViewById(R.id.etDescription);
         etProduct = view.findViewById(R.id.etProduct);
@@ -158,7 +160,8 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
         btnScan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onUploadPhoto(CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+                launchCamera();
+                //onUploadPhoto(CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
             }
         });
 
@@ -194,7 +197,16 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void launchCamera() {
+        Intent intent = new Intent(getActivity(), CameraActivity.class);
+        startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+/*
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if(intent.resolveActivity(getActivity().getPackageManager()) != null){
+            startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+        }
+
+ */
+        /*
         photoFile = getPhotoFileUri(photoFileName);
         Uri fileProvider = FileProvider.getUriForFile(getActivity(), "com.codepath.fileprovider", photoFile);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
@@ -203,19 +215,10 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
             // Start the image capture intent to take photo
             startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
         }
+
+         */
     }
 
-    private File getPhotoFileUri(String fileName) {
-        File mediaStorageDir = new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), TAG);
-
-        // Create the storage directory if it does not exist
-        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){
-            Log.d(TAG, "failed to create directory");
-        }
-
-        // Return the file target for the photo based on filename
-        return new File(mediaStorageDir.getPath() + File.separator + fileName);
-    }
 
     private void scan(Bitmap takenImage) {
         InputImage image = InputImage.fromBitmap(takenImage, 0);
@@ -307,6 +310,8 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os);
                 os.flush();
                 os.close();
+                Toast.makeText(getActivity(),"Image uploaded successfully!",Toast.LENGTH_LONG).show();
+
             } catch (Exception e) {
                 Log.e(getClass().getSimpleName(), "Error writing bitmap", e);
             }
@@ -314,6 +319,14 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
 
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
+                //Get photo file from intent and convert to bitmap.
+                String filePath = data.getStringExtra("photo");
+                Bitmap bitmap = BitmapFactory.decodeFile(filePath);
+                bitmap = getResizedBitmap(bitmap);
+                scan(bitmap);
+
+
+                /*
                 Uri photoUri = data.getData();
                 bitmap = null;
                 try {
@@ -342,7 +355,12 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
                 Log.i(TAG, String.valueOf(requestCode));
                 Toast.makeText(getActivity(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
             }
+            */
+            }else { // Result was a failure
+                Toast.makeText(getActivity(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
+            }
         }
+
 
     }
 
