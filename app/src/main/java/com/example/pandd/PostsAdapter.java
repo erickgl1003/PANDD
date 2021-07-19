@@ -1,6 +1,7 @@
 package com.example.pandd;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
@@ -135,7 +136,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             tvProduct = setTextView(product,tvProduct);
             tvBarcode = setTextView(post.getBarcode(),tvBarcode);
 
-            //Set post timeAgo stamp
+            //Set post's timeAgo stamp
             Date createdAt = post.getCreatedAt();
             String timeAgo = Post.calculateTimeAgo(createdAt);
             tvTime.setText(timeAgo);
@@ -152,6 +153,15 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
                 Glide.with(context).load(image.getUrl()).into(ivImage);
                 ivImage.setVisibility(View.VISIBLE);
             }
+            tvStore.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, SearchActivity.class);
+                    intent.putExtra("field","store");
+                    intent.putExtra("value",post.getStore().getObjectId());
+                    context.startActivity(intent);
+                }
+            });
         }
     }
 

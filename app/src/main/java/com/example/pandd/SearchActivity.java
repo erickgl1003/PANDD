@@ -52,11 +52,16 @@ public class SearchActivity extends AppCompatActivity {
         Intent intent = getIntent();
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
-            queryPosts(query);
+            queryPosts("product",query.toLowerCase());
+        }
+        else{
+            String field = intent.getStringExtra("field");
+            String value = intent.getStringExtra("value");
+            queryPosts(field, value);
         }
     }
 
-    protected void queryPosts(String product) {
+    protected void queryPosts(String field, String value) {
 
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
 
@@ -64,7 +69,8 @@ public class SearchActivity extends AppCompatActivity {
         query.include(Post.KEY_STORE);
         query.setLimit(20);
         query.addDescendingOrder("createdAt");
-        query.whereContains("product",product.toLowerCase());
+
+        query.whereContains(field, value);
 
         query.findInBackground(new FindCallback<Post>() {
             @Override

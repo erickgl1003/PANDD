@@ -161,7 +161,6 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
             @Override
             public void onClick(View v) {
                 launchCamera();
-                //onUploadPhoto(CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
             }
         });
 
@@ -199,24 +198,6 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
     private void launchCamera() {
         Intent intent = new Intent(getActivity(), CameraActivity.class);
         startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
-/*
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if(intent.resolveActivity(getActivity().getPackageManager()) != null){
-            startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
-        }
-
- */
-        /*
-        photoFile = getPhotoFileUri(photoFileName);
-        Uri fileProvider = FileProvider.getUriForFile(getActivity(), "com.codepath.fileprovider", photoFile);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
-
-        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
-            // Start the image capture intent to take photo
-            startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
-        }
-
-         */
     }
 
 
@@ -325,37 +306,6 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
                 bitmap = getResizedBitmap(bitmap);
                 scan(bitmap);
 
-
-                /*
-                Uri photoUri = data.getData();
-                bitmap = null;
-                try {
-                    bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), photoUri);
-                }catch (FileNotFoundException e){
-                    e.printStackTrace();
-                    Log.e(TAG, "File not found");
-                } catch (IOException e){
-                    Log.d(TAG, e.getLocalizedMessage());
-                }
-                File testDir = getActivity().getApplicationContext().getFilesDir();
-                imagT = new File(testDir, "photo.jpg");
-                OutputStream os;
-                try {
-                    os = new FileOutputStream(imagT);
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os);
-                    bitmap = getResizedBitmap(bitmap);
-                    scan(bitmap);
-                    os.flush();
-                    os.close();
-                } catch (Exception e) {
-                    Log.e(getClass().getSimpleName(), "Error writing bitmap", e);
-                }
-
-            } else {
-                Log.i(TAG, String.valueOf(requestCode));
-                Toast.makeText(getActivity(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
-            }
-            */
             }else { // Result was a failure
                 Toast.makeText(getActivity(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
             }
