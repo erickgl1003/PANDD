@@ -21,6 +21,8 @@ import com.example.pandd.models.Post;
 import com.google.android.gms.maps.model.LatLng;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
+import com.pedromassango.doubleclick.DoubleClick;
+import com.pedromassango.doubleclick.DoubleClickListener;
 
 import java.util.Date;
 import java.util.List;
@@ -153,15 +155,17 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
                 Glide.with(context).load(image.getUrl()).into(ivImage);
                 ivImage.setVisibility(View.VISIBLE);
             }
-            tvStore.setOnClickListener(new View.OnClickListener() {
+            tvStore.setOnClickListener( new DoubleClick(new DoubleClickListener() {
                 @Override
-                public void onClick(View v) {
+                public void onSingleClick(View view) {}
+                @Override
+                public void onDoubleClick(View view) {
                     Intent intent = new Intent(context, SearchActivity.class);
                     intent.putExtra("field","store");
                     intent.putExtra("value",post.getStore().getObjectId());
                     context.startActivity(intent);
                 }
-            });
+            }));
         }
     }
 

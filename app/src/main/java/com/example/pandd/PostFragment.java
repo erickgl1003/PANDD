@@ -177,22 +177,28 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
                 String description = etDescription.getText().toString();
                 String product = etProduct.getText().toString();
 
-                if(description.isEmpty()){
-                    Toast.makeText(getActivity(),"Description can't be empty",Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if(product.isEmpty()){
-                    Toast.makeText(getActivity(),"Product can't be empty",Toast.LENGTH_SHORT).show();
-                    return;
-                }
+
+                if(verifyEmpty(description, "Description")) return;
+                if(verifyEmpty(product, "Product")) return;
+
                 if(!locationFilled){
                     Toast.makeText(getActivity(),"Store can't be empty",Toast.LENGTH_SHORT).show();
                     return;
                 }
+
                 ParseUser currentUser = ParseUser.getCurrentUser();
                 savePost(description, product, barcode, location, currentUser, imagT);
             }
         });
+    }
+
+
+    private boolean verifyEmpty(String string, String field) {
+        if(string.isEmpty()){
+            Toast.makeText(getActivity(),field + " field can't be empty!",Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        return false;
     }
 
     private void launchCamera() {

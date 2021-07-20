@@ -9,6 +9,10 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.Transformation;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.pandd.models.Post;
@@ -25,6 +29,7 @@ public class SearchActivity extends AppCompatActivity {
     protected PostsAdapter adapter;
     protected List<Post> allPosts;
     protected RecyclerView rvPosts;
+    protected LinearLayout llPosts;
     public static final String TAG = "SearchActivity";
     private SimpleLocation location;
 
@@ -39,10 +44,13 @@ public class SearchActivity extends AppCompatActivity {
             SimpleLocation.openSettings(this);
         }
 
+        llPosts = findViewById(R.id.llPosts);
+        llPosts.animate().translationX(1000);
+
         rvPosts = findViewById(R.id.rvPosts);
 
         allPosts = new ArrayList<>();
-        adapter = new PostsAdapter(this, allPosts,location.getLatitude(),location.getLongitude());
+        adapter = new PostsAdapter(this, allPosts, location.getLatitude(), location.getLongitude());
 
         rvPosts.setLayoutManager(new LinearLayoutManager(this));
         rvPosts.setAdapter(adapter);
@@ -52,13 +60,14 @@ public class SearchActivity extends AppCompatActivity {
         Intent intent = getIntent();
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
-            queryPosts("product",query.toLowerCase());
-        }
-        else{
+            queryPosts("product", query.toLowerCase());
+        } else {
             String field = intent.getStringExtra("field");
             String value = intent.getStringExtra("value");
             queryPosts(field, value);
         }
+
+
     }
 
     protected void queryPosts(String field, String value) {
@@ -79,13 +88,14 @@ public class SearchActivity extends AppCompatActivity {
                     Log.e(TAG, "Issue with getting posts", e);
                     return;
                 }
-                if(posts.size() == 0){
-                    Toast.makeText(SearchActivity.this,"No posts contain said product",Toast.LENGTH_SHORT).show();
+                if (posts.size() == 0) {
+                    Toast.makeText(SearchActivity.this, "No posts contain said product", Toast.LENGTH_SHORT).show();
                     finish();
                     return;
                 }
                 allPosts.addAll(posts);
                 adapter.notifyDataSetChanged();
+                llPosts.animate().translationX(0);
             }
         });
     }
@@ -103,3 +113,4 @@ public class SearchActivity extends AppCompatActivity {
     }
 
 }
+

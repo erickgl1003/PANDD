@@ -41,9 +41,6 @@ public class HomeFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Context context = getActivity();
 
-        //Ask for camera permissions:
-
-
         //Initialize SimpleLocation and request permissions to get the user actual location
         location = new SimpleLocation(context);
         if (!location.hasLocationEnabled()) {
