@@ -68,6 +68,8 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
 
+import es.dmoral.toasty.Toasty;
+
 public class PostFragment extends Fragment implements OnMapReadyCallback {
 
     public static final String TAG = "PANDD";
@@ -135,7 +137,7 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
 
             @Override
             public void onError(@NonNull Status status) {
-                Toast.makeText(getActivity(),status.toString(),Toast.LENGTH_SHORT).show();
+                //This just means the user closed the autocomplete fragment, not really an error! Still Log'd it just in case.
                 Log.i(TAG, "An error occurred: " + status);
             }
         });
@@ -182,7 +184,7 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
                 if(verifyEmpty(product, "Product")) return;
 
                 if(!locationFilled){
-                    Toast.makeText(getActivity(),"Store can't be empty",Toast.LENGTH_SHORT).show();
+                    Toasty.warning(getActivity(),"Store can't be empty",Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -195,7 +197,7 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
 
     private boolean verifyEmpty(String string, String field) {
         if(string.isEmpty()){
-            Toast.makeText(getActivity(),field + " field can't be empty!",Toast.LENGTH_SHORT).show();
+            Toasty.warning(getActivity(),field + " field can't be empty!",Toast.LENGTH_SHORT).show();
             return true;
         }
         return false;
@@ -216,11 +218,11 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
                     @Override
                     public void onSuccess(List<Barcode> barcodes) {
                         if(barcodes.size() == 0){
-                            Toast.makeText(getActivity(),"No barcode detected",Toast.LENGTH_SHORT).show();
+                            Toasty.error(getActivity(),"No barcode detected",Toast.LENGTH_SHORT).show();
                             return;
                         }
                         if(barcodes.size() > 1){
-                            Toast.makeText(getActivity(),"There's more than 1 barcode! Be sure to only scan one barcode per post",Toast.LENGTH_LONG).show();
+                            Toasty.warning(getActivity(),"There's more than 1 barcode! Be sure to only scan one barcode per post",Toast.LENGTH_LONG).show();
                             return;
                         }
                         Barcode barcodeScanned = barcodes.get(0);
@@ -228,7 +230,7 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
                         int valueType = barcodeScanned.getValueType();
 
                         if(valueType != Barcode.TYPE_PRODUCT && valueType != Barcode.TYPE_TEXT ){
-                            Toast.makeText(getActivity(),"That's not a code product barcode! Be sure to scan only valid barcodes",Toast.LENGTH_LONG).show();
+                            Toasty.warning(getActivity(),"That's not a product barcode! Be sure to scan only valid barcodes",Toast.LENGTH_LONG).show();
                             Log.i(TAG, String.valueOf(valueType));
                             return;
                         }
@@ -246,7 +248,7 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getActivity(),e.getMessage(),Toast.LENGTH_LONG).show();
+                        Toasty.error(getActivity(),e.getMessage(),Toast.LENGTH_LONG).show();
                     }
                 });
 
@@ -297,7 +299,7 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os);
                 os.flush();
                 os.close();
-                Toast.makeText(getActivity(),"Image uploaded successfully!",Toast.LENGTH_LONG).show();
+                Toasty.success(getActivity(),"Image uploaded successfully!",Toast.LENGTH_LONG).show();
 
             } catch (Exception e) {
                 Log.e(getClass().getSimpleName(), "Error writing bitmap", e);
@@ -313,7 +315,7 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
                 scan(bitmap);
 
             }else { // Result was a failure
-                Toast.makeText(getActivity(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
+                Toasty.warning(getActivity(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -355,14 +357,14 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
             public void done(ParseException e) {
                 if(e != null) {
                     Log.e(TAG,"Error while saving post ",e);
-                    Toast.makeText(getActivity(),"Error while saving post", Toast.LENGTH_SHORT).show();
+                    Toasty.error(getActivity(),"Error while saving post", Toast.LENGTH_SHORT).show();
                 }
                 Log.i(TAG,"Post saved successfully");
                 etDescription.setText("");
                 etProduct.setText("");
                 tvBarcode.setVisibility(View.GONE);
                 barcode = "";
-                Toast.makeText(getActivity(),"Post successfully published!", Toast.LENGTH_SHORT).show();
+                Toasty.success(getActivity(),"Post successfully published!", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -384,13 +386,13 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
                     store.save();
                     objects.add(store);
                 } catch (ParseException e) {
-                    Toast.makeText(getActivity(),"Error saving: " + e.getMessage(),Toast.LENGTH_LONG).show();
+                    Toasty.error(getActivity(),"Error saving: " + e.getMessage(),Toast.LENGTH_LONG).show();
                     e.printStackTrace();
                 }
             }
             return objects.get(0);
         } catch (ParseException e) {
-            Toast.makeText(getActivity(),"Error querying: " + e.getMessage(),Toast.LENGTH_LONG).show();
+            Toasty.error(getActivity(),"Error querying: " + e.getMessage(),Toast.LENGTH_LONG).show();
         }
         return null;
     }

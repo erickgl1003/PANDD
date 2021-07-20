@@ -28,6 +28,8 @@ import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import es.dmoral.toasty.Toasty;
+
 public class CameraActivity extends AppCompatActivity {
 
     ImageCapture imageCapture;
@@ -77,7 +79,6 @@ public class CameraActivity extends AppCompatActivity {
         imageCapture.takePicture(fileOptions, ContextCompat.getMainExecutor(this), new ImageCapture.OnImageSavedCallback() {
             @Override
             public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
-                Toast.makeText(getBaseContext(), "Photo capture succeeded", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent();
                 intent.putExtra("photo", photoFile.getPath());
                 setResult(-1, intent);
@@ -86,6 +87,7 @@ public class CameraActivity extends AppCompatActivity {
 
             @Override
             public void onError(@NonNull ImageCaptureException exception) {
+                Toasty.error(getBaseContext(), "Error taking the capture!", Toast.LENGTH_SHORT).show();
                 Log.i("Image Capture", exception.toString());
             }
         });
@@ -101,7 +103,7 @@ public class CameraActivity extends AppCompatActivity {
                 try {
                     cameraProvider = processCameraProvider.get();
                 } catch (Exception e) {
-                    Toast.makeText(CameraActivity.this, e.getMessage(),Toast.LENGTH_LONG).show();
+                    Toasty.error(CameraActivity.this, e.getMessage(),Toast.LENGTH_LONG).show();
                 }
 
                 // Set up preview window
@@ -118,7 +120,7 @@ public class CameraActivity extends AppCompatActivity {
                     cameraProvider.unbindAll();
                     cameraProvider.bindToLifecycle(CameraActivity.this, cameraSelector, preview, imageCapture);
                 }catch (Exception e){
-                    Toast.makeText(CameraActivity.this,e.getMessage(),Toast.LENGTH_LONG).show();
+                    Toasty.error(CameraActivity.this,e.getMessage(),Toast.LENGTH_LONG).show();
                 }
             }
         }, ContextCompat.getMainExecutor(this));
@@ -146,7 +148,7 @@ public class CameraActivity extends AppCompatActivity {
             if (ContextCompat.checkSelfPermission(getBaseContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
                 startCamera();
             } else {
-                Toast.makeText(this, "Permissions not grated by the user", Toast.LENGTH_SHORT).show();
+                Toasty.warning(this, "Permissions not grated by the user", Toast.LENGTH_SHORT).show();
                 finish();
             }
         }

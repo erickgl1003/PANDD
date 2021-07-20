@@ -23,6 +23,7 @@ import com.parse.ParseQuery;
 import java.util.ArrayList;
 import java.util.List;
 
+import es.dmoral.toasty.Toasty;
 import im.delight.android.location.SimpleLocation;
 
 public class SearchActivity extends AppCompatActivity {
@@ -89,7 +90,7 @@ public class SearchActivity extends AppCompatActivity {
                     return;
                 }
                 if (posts.size() == 0) {
-                    Toast.makeText(SearchActivity.this, "No posts contain said product", Toast.LENGTH_SHORT).show();
+                    Toasty.warning(SearchActivity.this, "No posts contain said product", Toast.LENGTH_SHORT).show();
                     finish();
                     return;
                 }

@@ -15,6 +15,8 @@ import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
+import es.dmoral.toasty.Toasty;
+
 public class LoginActivity extends AppCompatActivity {
 
     public static final String TAG = "LoginActivity";
@@ -61,7 +63,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean verifyEmpty(String string, String field) {
         if(string.isEmpty()){
-            Toast.makeText(LoginActivity.this,field + " field can't be empty!",Toast.LENGTH_SHORT).show();
+            Toasty.warning(LoginActivity.this, field + " field can't be empty!", Toast.LENGTH_SHORT).show();
             return true;
         }
         return false;
@@ -77,7 +79,7 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
 
-                Toast.makeText(LoginActivity.this,"Success!",Toast.LENGTH_SHORT);
+                Toasty.success(LoginActivity.this,"Success!",Toast.LENGTH_SHORT).show();
                 goMainActivity();
             }
         });

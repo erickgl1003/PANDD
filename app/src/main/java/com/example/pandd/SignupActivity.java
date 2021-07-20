@@ -28,6 +28,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import es.dmoral.toasty.Toasty;
+
 public class SignupActivity extends AppCompatActivity {
 
     public static final String TAG = "SignupActivity";
@@ -80,7 +82,7 @@ public class SignupActivity extends AppCompatActivity {
                 if(verifyEmpty(email, "Email")) return;
 
                 if(!password.equals(passwordConfirm)){
-                    Toast.makeText(SignupActivity.this,"Passwords don't match!",Toast.LENGTH_SHORT).show();
+                    Toasty.warning(SignupActivity.this, "Passwords don't match!", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 signUser(username, password, email,  imagT);
@@ -100,7 +102,7 @@ public class SignupActivity extends AppCompatActivity {
 
     private boolean verifyEmpty(String string, String field) {
         if(string.isEmpty()){
-            Toast.makeText(SignupActivity.this,field + " field can't be empty!",Toast.LENGTH_SHORT).show();
+            Toasty.warning(SignupActivity.this,field + " field can't be empty!",Toast.LENGTH_SHORT).show();
             return true;
         }
         return false;
@@ -123,12 +125,12 @@ public class SignupActivity extends AppCompatActivity {
             }catch (FileNotFoundException e){
                 e.printStackTrace();
                 Log.e(TAG, "File not found");
-                Toast.makeText(SignupActivity.this,"File not found. Using default user profile picture",Toast.LENGTH_LONG).show();
+                Toasty.info(SignupActivity.this,"File not found. Using default user profile picture",Toast.LENGTH_LONG).show();
                 bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.user);
 
             } catch (IOException e){
                 Log.e(TAG, e.getLocalizedMessage());
-                Toast.makeText(SignupActivity.this,"Error getting the image. Using default user profile picture",Toast.LENGTH_LONG).show();
+                Toasty.info(SignupActivity.this,"Error getting the image. Using default user profile picture",Toast.LENGTH_LONG).show();
                 bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.user);
             }
             File testDir = getApplicationContext().getFilesDir();
@@ -141,7 +143,7 @@ public class SignupActivity extends AppCompatActivity {
                 os.close();
                 btnSignup.setVisibility(View.VISIBLE);
             } catch (Exception e) {
-                Toast.makeText(SignupActivity.this,e.getMessage(),Toast.LENGTH_LONG).show();
+                Toasty.error(SignupActivity.this,e.getMessage(),Toast.LENGTH_LONG).show();
                 Log.e(getClass().getSimpleName(), "Error writing bitmap", e);
             }
         }
@@ -162,7 +164,7 @@ public class SignupActivity extends AppCompatActivity {
                     savePhoto(curr, new ParseFile(file));
                 }
                 else{
-                    Toast.makeText(SignupActivity.this,e.getMessage(),Toast.LENGTH_LONG).show();
+                    Toasty.error(SignupActivity.this,e.getMessage(),Toast.LENGTH_LONG).show();
                     Log.e(TAG, "Error signing user:" + e.getMessage() + "\n" + e.getCause());
                 }
             }
@@ -178,7 +180,7 @@ public class SignupActivity extends AppCompatActivity {
                     goMainAcitivty();
                 }
                 else{
-                    Toast.makeText(SignupActivity.this, e.getMessage(),Toast.LENGTH_SHORT).show();
+                    Toasty.error(SignupActivity.this, e.getMessage(),Toast.LENGTH_SHORT).show();
                     Log.e(TAG, "Error saving photo:" + e.getMessage() + "\n" + e.getCause());
                 }
             }
