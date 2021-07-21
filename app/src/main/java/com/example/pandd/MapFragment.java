@@ -95,8 +95,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     }
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        //Once the google Map's map loads, put in inside our own map, and query the posts
+        //Once the google Map's map loads, put in inside our own map
         mMap = googleMap;
+        mMap.setOnMarkerClickListener(this);
 
         //Initialize SimpleLocation to set the user current latitude and longitude
         Context context = getActivity();
@@ -146,8 +147,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             else if(withinRange(post,km) && added.contains(latLng)){
                 int index = added.indexOf(latLng);
                 Marker mark = markers.get(index);
-                int posts =  Integer.parseInt(mark.getSnippet());
-                mark.setSnippet(String.valueOf(posts+1));
+                String snippet = mark.getSnippet();
+                int posts = Integer.parseInt(snippet.split(" ", 2)[0]);;
+                mark.setSnippet(String.valueOf(posts+1) + " posts");
             }
         }
     }
@@ -157,7 +159,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         markerOptions.position(latLng);
         markerOptions.title(name);
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-        markerOptions.snippet("1");
+        markerOptions.snippet("1 post");
 
 
         return mMap.addMarker(markerOptions);
@@ -166,6 +168,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     @Override
     public boolean onMarkerClick(@NonNull @NotNull Marker marker) {
+
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Store");
         query.whereEqualTo("long",marker.getPosition().longitude);
         query.whereEqualTo("lat",marker.getPosition().latitude);
