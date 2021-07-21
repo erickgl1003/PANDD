@@ -1,17 +1,14 @@
 package com.example.pandd;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Camera;
 import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -28,8 +25,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import com.example.pandd.models.Post;
@@ -72,7 +67,7 @@ import es.dmoral.toasty.Toasty;
 
 public class PostFragment extends Fragment implements OnMapReadyCallback {
 
-    public static final String TAG = "PANDD";
+    public static final String TAG = "PostFragment";
     private static final int UPLOAD_REQUEST = 50;
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 42;;
 
@@ -100,7 +95,7 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
 
-        View rootView =  inflater.inflate(R.layout.activity_post, parent, false);
+        View rootView =  inflater.inflate(R.layout.fragment_post, parent, false);
 
         //Initialize the Places class using the context from this fragment and the Maps API Key
         ApplicationInfo ai = null;

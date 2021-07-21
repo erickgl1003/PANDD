@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
         // Fragment definition for bottom navigation view
         final Fragment homeFragment = new HomeFragment();
         final Fragment postFragment = new PostFragment();
+        final Fragment mapFragment = new MapFragment();
 
         fragmentManager.beginTransaction().replace(R.id.flContainer, homeFragment).commit();
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
@@ -48,6 +49,9 @@ public class MainActivity extends AppCompatActivity {
                 switch (item.getItemId()) {
                     case R.id.home:
                         fragment = homeFragment;
+                        break;
+                    case R.id.map:
+                        fragment=  mapFragment;
                         break;
                     case R.id.post:
                     default:
