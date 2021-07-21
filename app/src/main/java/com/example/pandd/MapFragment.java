@@ -36,6 +36,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import es.dmoral.toasty.Toasty;
 import im.delight.android.location.SimpleLocation;
@@ -99,16 +100,21 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         mMap = googleMap;
         mMap.setOnMarkerClickListener(this);
 
-        //Initialize SimpleLocation to set the user current latitude and longitude
+        //Initialize SimpleLocation to set the user current latitude and longitude a
         Context context = getActivity();
         userLocation = new SimpleLocation(context);
         userLat = userLocation.getLatitude();
         userLong = userLocation.getLongitude();
 
+
         //Set the map to focus on the user location
         LatLng latLng = new LatLng(userLat, userLong);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(10));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(12));
+        Marker userMarker = addMarker(latLng);
+        userMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+        userMarker.setTitle("You");
+        userMarker.showInfoWindow();
         queryPosts();
     }
     protected void queryPosts() {
@@ -134,41 +140,32 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     private void addStores() {
         //Once the posts are queried, get the stores and put them inside our map
-
         List<LatLng> added = new ArrayList<>();
         for(int i = 0; i < allPosts.size();i++){
             Post post = allPosts.get(i);
             LatLng latLng = new LatLng(post.getStore().getDouble("lat"), post.getStore().getDouble("long"));
             if(withinRange(post,km) && !added.contains(latLng) ){
-                String name = post.getStore().getString("name");
-                markers.add(addMarker(latLng, name));
+                addMarker(latLng);
                 added.add(latLng);
-            }
-            else if(withinRange(post,km) && added.contains(latLng)){
-                int index = added.indexOf(latLng);
-                Marker mark = markers.get(index);
-                String snippet = mark.getSnippet();
-                int posts = Integer.parseInt(snippet.split(" ", 2)[0]);;
-                mark.setSnippet(String.valueOf(posts+1) + " posts");
             }
         }
     }
 
-    public Marker addMarker(LatLng latLng, String name){
+    public Marker addMarker(LatLng latLng){
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
-        markerOptions.title(name);
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-        markerOptions.snippet("1 post");
-
-
         return mMap.addMarker(markerOptions);
     }
 
 
     @Override
     public boolean onMarkerClick(@NonNull @NotNull Marker marker) {
-
+        //Query posts from each store when clicked on their marker (if it isn't not user marker)
+        if(marker.getTitle() != null){
+            marker.showInfoWindow();
+            return true;
+        }
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Store");
         query.whereEqualTo("long",marker.getPosition().longitude);
         query.whereEqualTo("lat",marker.getPosition().latitude);
