@@ -77,3 +77,58 @@ Informative and social media app that allows users to post discounts and promos 
    * → None
 * Post
    * → None
+
+### Wireframes
+https://www.figma.com/proto/2zmMJ4Z2jR1lm8eUF2V7bS/Untitled?node-id=1%3A2&scaling=scale-down&page-id=0%3A1
+
+### Models
+Post
+ | Property      | Type     | Description |
+   | ------------- | -------- | ------------|
+   | objectId      | String   | unique id for the user post (default field) |
+   | createdAt     | DateTime | date when post is created (default field) |
+   | user        | Pointer to User| post author |
+   | description       | String   | description by author |
+   | barcode     | String | product barcode |
+   |store   | Pointer to Store | Store mentioned | 
+   | image         | File     | image that user posts |
+     | promo start date |DateTime| date when the promo starts |
+   | promo expire date |DateTime| date when the promo ends|
+   
+Store
+| Property      | Type     | Description |
+   | ------------- | -------- | ------------|
+   | objectId      | String   | unique id for the user post (default field) |
+   | createdAt     | DateTime | date when post is created (default field) |
+   | name     | String | store name |
+   | address   | String | store address |
+   | mapId   | String | google map Id |
+   | long   | Number | store address longitude |
+   | lat   | Number | store address latitude |
+   
+   
+
+User
+ | Property      | Type     | Description |
+   | ------------- | -------- | ------------|
+   | objectId      | String   | unique id for the user (default field) |
+   | createdAt     | DateTime | date when post is created (default field) |
+   | username     | string | users username |
+   | password     | string | users passwords |
+   | email     | string | users email |
+   | profile         | File     | image that user posts |
+   
+### Network Request Outline
+* Login screen
+   * (Read/GET) Check if user account exists.
+* Registration screen
+   * (Create/POST) Create a new user account.
+* Home 
+    * (Read/GET) Query all posts and sort them by created date.
+* Map screen
+    * (Read/GET) Query all stores.
+* Camera scanner
+    *  None
+* Post
+    * (Create/POST) Create a new post.
+    
