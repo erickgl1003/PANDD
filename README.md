@@ -92,7 +92,7 @@ Post
    | barcode     | String | product barcode |
    |store   | Pointer to Store | Store mentioned | 
    | image         | File     | image that user posts |
-     | promo start date |DateTime| date when the promo starts |
+   | promo start date |DateTime| date when the promo starts |
    | promo expire date |DateTime| date when the promo ends|
    
 Store
