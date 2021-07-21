@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.pandd.models.Post;
+import com.example.pandd.models.Store;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -49,7 +50,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private double userLat;
     private double userLong;
     private int km = 10;
-    protected List<Post> allPosts = new ArrayList<Post>();
+    protected List<Store> allStores = new ArrayList<Store>();
     List<Marker> markers = new ArrayList<Marker>();
     private SimpleLocation userLocation;
 
@@ -87,9 +88,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         super.onCreate(savedInstanceState);
     }
 
-    private boolean withinRange(Post post, int km) {
+    private boolean withinRange(LatLng storell, int km) {
         //Calculates the distance between user and store.
-        LatLng storell = new LatLng(post.getStore().getDouble("lat"), post.getStore().getDouble("long"));
         double dist = SimpleLocation.calculateDistance(storell.latitude, storell.longitude, userLat, userLong);
         dist /= 1000;
         return (dist <= km);
@@ -118,21 +118,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         queryPosts();
     }
     protected void queryPosts() {
-        ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
-
-        query.include(Post.KEY_USER);
-        query.include(Post.KEY_STORE);
-        query.setLimit(20);
+        ParseQuery<Store> query = ParseQuery.getQuery(Store.class);
         query.addDescendingOrder("createdAt");
 
-        query.findInBackground(new FindCallback<Post>() {
+        query.findInBackground(new FindCallback<Store>() {
             @Override
-            public void done(List<Post> posts, ParseException e) {
+            public void done(List<Store> stores, ParseException e) {
                 if (e != null) {
                     Log.e(TAG, "Issue with getting posts", e);
                     return;
                 }
-                allPosts.addAll(posts);
+                allStores.addAll(stores);
                 addStores();
             }
         });
@@ -140,13 +136,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     private void addStores() {
         //Once the posts are queried, get the stores and put them inside our map
-        List<LatLng> added = new ArrayList<>();
-        for(int i = 0; i < allPosts.size();i++){
-            Post post = allPosts.get(i);
-            LatLng latLng = new LatLng(post.getStore().getDouble("lat"), post.getStore().getDouble("long"));
-            if(withinRange(post,km) && !added.contains(latLng) ){
+        for(int i = 0; i < allStores.size();i++){
+            Store store = allStores.get(i);
+            LatLng latLng = new LatLng(store.getDouble("lat"), store.getDouble("long"));
+            if(withinRange(latLng,km)){
                 addMarker(latLng);
-                added.add(latLng);
             }
         }
     }
