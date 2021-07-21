@@ -105,6 +105,7 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
             Log.e(TAG,e.getMessage());
             e.printStackTrace();
         }
+        //Application info can't be null since it is required to get the API Key, in order for the application to execute properly.
         assert ai != null;
         Places.initialize(getActivity().getApplicationContext(), ai.metaData.getString("com.google.android.geo.API_KEY"));
         PlacesClient placesClient = Places.createClient(getActivity());

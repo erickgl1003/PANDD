@@ -14,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.pandd.models.Post;
 import com.example.pandd.models.Store;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -28,7 +27,6 @@ import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.parse.FindCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -37,7 +35,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import es.dmoral.toasty.Toasty;
 import im.delight.android.location.SimpleLocation;
@@ -71,6 +68,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             Log.e(TAG,e.getMessage());
             e.printStackTrace();
         }
+        //Application info can't be null since it is required to get the API Key, in order for the application to execute properly.
         assert ai != null;
         Places.initialize(getActivity().getApplicationContext(), ai.metaData.getString("com.google.android.geo.API_KEY"));
         PlacesClient placesClient = Places.createClient(getActivity());
@@ -115,9 +113,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         userMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
         userMarker.setTitle("You");
         userMarker.showInfoWindow();
-        queryPosts();
+        queryStores();
     }
-    protected void queryPosts() {
+    protected void queryStores() {
         ParseQuery<Store> query = ParseQuery.getQuery(Store.class);
         query.addDescendingOrder("createdAt");
 
