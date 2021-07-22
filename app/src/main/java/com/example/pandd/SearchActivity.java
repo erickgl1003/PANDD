@@ -55,7 +55,6 @@ public class SearchActivity extends AppCompatActivity {
 
         rvPosts.setLayoutManager(new LinearLayoutManager(this));
         rvPosts.setAdapter(adapter);
-        rvPosts.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
         // Get the intent, verify the action and get the query
         Intent intent = getIntent();

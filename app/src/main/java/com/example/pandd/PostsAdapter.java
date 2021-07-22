@@ -135,8 +135,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             //Set the product and barcode (if they aren't null)
             String product = post.getProduct();
             product = product.substring(0,1).toUpperCase() + product.substring(1);
-            tvProduct = setTextView(product,tvProduct);
-            tvBarcode = setTextView(post.getBarcode(),tvBarcode);
+            tvProduct = setTextView(product,tvProduct,"Product: ");
+            tvBarcode = setTextView(post.getBarcode(),tvBarcode,"Barcode: ");
 
             //Set post's timeAgo stamp
             Date createdAt = post.getCreatedAt();
@@ -169,9 +169,9 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
         }
     }
 
-    private TextView setTextView(String postText, TextView textView) {
+    private TextView setTextView(String postText, TextView textView, String preText) {
         if(postText != null) {
-            String textField = "Product: " + postText;
+            String textField = preText + postText;
             Spannable spannableProduct = customize(textField, 8, textField.length());
             textView.setText(spannableProduct, TextView.BufferType.SPANNABLE);
             textView.setVisibility(View.VISIBLE);

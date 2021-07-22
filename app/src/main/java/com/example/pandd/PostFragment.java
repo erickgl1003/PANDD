@@ -118,8 +118,9 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
                 getChildFragmentManager().findFragmentById(R.id.autocomplete_fragment);
 
-        // Specify the types of place data to return.
+        // Specify the types of place data to return and style of the element
         autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS));
+        autocompleteFragment.setHint("Search store...");
 
         // Set up a PlaceSelectionListener to handle the response.
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
@@ -295,7 +296,7 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os);
                 os.flush();
                 os.close();
-                Toasty.success(getActivity(),"Image uploaded successfully!",Toast.LENGTH_LONG).show();
+                Toasty.success(getActivity(),"Image uploaded successfully!",Toast.LENGTH_SHORT).show();
 
             } catch (Exception e) {
                 Log.e(getClass().getSimpleName(), "Error writing bitmap", e);

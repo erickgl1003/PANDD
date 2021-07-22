@@ -88,7 +88,7 @@ public class Post extends ParseObject {
             } else if (diff < 48 * HOUR_MILLIS) {
                 return "yesterday";
             } else {
-                return diff / DAY_MILLIS + " d";
+                return diff / DAY_MILLIS + " days ago";
             }
         } catch (Exception e) {
             Log.i("Error:", "getRelativeTimeAgo failed", e);

@@ -61,7 +61,6 @@ public class HomeFragment extends Fragment {
         adapter = new PostsAdapter(context, allPosts,location.getLatitude(),location.getLongitude());
         rvPosts.setLayoutManager(new LinearLayoutManager(context));
         rvPosts.setAdapter(adapter);
-        rvPosts.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
         queryPosts();
 
         //Set up fragment swipes
