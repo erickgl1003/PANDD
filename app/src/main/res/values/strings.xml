@@ -20,4 +20,8 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="map">Map</string>
+    <string name="name">Store name:</string>
+    <string name="address">Address:</string>
+    <string name="google_maps_id">Google maps ID:</string>
+    <string name="coordinates">Coordinates:</string>
 </resources>

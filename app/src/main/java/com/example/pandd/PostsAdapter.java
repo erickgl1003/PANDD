@@ -13,11 +13,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.pandd.models.Post;
+import com.example.pandd.models.Store;
 import com.google.android.gms.maps.model.LatLng;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
@@ -116,11 +118,13 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             tvBarcode.setVisibility(View.GONE);
             ivImage.setVisibility(View.GONE);
 
+            Store storeObj = (Store) post.getStore();
+
             //Get all the info for the post
             ParseUser author = post.getUser();
             String username = author.getUsername();
             String description = post.getDescription();
-            String store = "at " + post.getStore().getString("name");
+            String store = "at " + storeObj.getName();
 
             //Set the store, description and username text
             Spannable spannableStore = customize(store, 2, store.length());
@@ -155,9 +159,19 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
                 Glide.with(context).load(image.getUrl()).into(ivImage);
                 ivImage.setVisibility(View.VISIBLE);
             }
+
+            //Set listener on the store field 1 click for store info, 2 for searching posts by store
             tvStore.setOnClickListener( new DoubleClick(new DoubleClickListener() {
                 @Override
-                public void onSingleClick(View view) {}
+                public void onSingleClick(View view) {
+                    Intent i = new Intent(context,StoreInfo.class);
+                    i.putExtra("name",storeObj.getName());
+                    i.putExtra("address",storeObj.getAddress());
+                    i.putExtra("mapId",storeObj.getMapId());
+                    String coordinates = getCoordinatesText(storeObj.getLat(),storeObj.getLong());
+                    i.putExtra("coordinates",coordinates);
+                    context.startActivity(i);
+                }
                 @Override
                 public void onDoubleClick(View view) {
                     Intent intent = new Intent(context, SearchActivity.class);
@@ -167,6 +181,10 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
                 }
             }));
         }
+    }
+
+    private String getCoordinatesText(Double lat, Double longitude) {
+        return String.format("%.3f", lat) + ", " + String.format("%.3f", longitude);
     }
 
     private TextView setTextView(String postText, TextView textView, String preText) {

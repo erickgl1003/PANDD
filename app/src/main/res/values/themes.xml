@@ -20,4 +20,10 @@
         <!-- Background color when SELECTED -->
         <item name="colorControlHighlight">@color/black</item>
     </style>
+    <style name="MyDialogTheme" parent="Theme.AppCompat.Dialog">
+        <item name="windowActionBar">false</item>
+        <item name="titleEnabled">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
 </resources>
