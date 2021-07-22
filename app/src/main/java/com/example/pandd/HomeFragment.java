@@ -8,12 +8,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.pandd.models.Post;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -30,6 +32,8 @@ public class HomeFragment extends Fragment {
     public static final String TAG = "HomeFragment";
     protected SwipeRefreshLayout swipeContainer;
     private SimpleLocation location;
+    FragmentManager fragmentManager;
+    BottomNavigationView bottomNavigationView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
@@ -47,6 +51,10 @@ public class HomeFragment extends Fragment {
             SimpleLocation.openSettings(context);
         }
 
+        //Set navigation item when fragments loads by swiping
+        bottomNavigationView = (BottomNavigationView) getActivity().findViewById(R.id.bottom_navigation);
+
+
         //Set up the recyclerView to show the posts
         rvPosts = view.findViewById(R.id.rvPosts);
         allPosts = new ArrayList<>();
@@ -55,6 +63,19 @@ public class HomeFragment extends Fragment {
         rvPosts.setAdapter(adapter);
         rvPosts.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
         queryPosts();
+
+        //Set up fragment swipes
+        fragmentManager = getParentFragmentManager();
+        rvPosts.setOnTouchListener(new OnSwipeTouchListener(context) {
+            @Override
+            public void onSwipeLeft() {
+                leftSwipe();
+            }
+            @Override
+            public void onSwipeRight() {
+                rightSwipe();
+            }
+        });
 
         //Set up the swipeContainer that allows the user to refresh the posts.
         swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
@@ -72,6 +93,14 @@ public class HomeFragment extends Fragment {
                 android.R.color.holo_red_light);
     }
 
+    private void rightSwipe() {
+        bottomNavigationView.setSelectedItemId(R.id.post);
+    }
+
+    private void leftSwipe() {
+        bottomNavigationView.setSelectedItemId(R.id.map);
+    }
+
     protected void queryPosts() {
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
 
@@ -84,7 +113,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void done(List<Post> posts, ParseException e) {
                 if (e != null) {
-                    Log.e(TAG, "Issue with getting posts", e);
+                    Log.e(TAG, "Issue getting posts", e);
                     return;
                 }
                 

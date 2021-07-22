@@ -5,20 +5,24 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.ParseUser;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
 
     private static final int REQUEST_LOCATION_CODE = 11;
+    FragmentContainerView flContainer;
+    BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,15 +36,31 @@ public class MainActivity extends AppCompatActivity {
         // Sets the Toolbar to act as the ActionBar for this Activity window.
         setSupportActionBar(toolbar);
 
-        final FragmentManager fragmentManager = getSupportFragmentManager();
-
         // Fragment definition for bottom navigation view
         final Fragment homeFragment = new HomeFragment();
         final Fragment postFragment = new PostFragment();
         final Fragment mapFragment = new MapFragment();
 
-        fragmentManager.beginTransaction().replace(R.id.flContainer, homeFragment).commit();
-        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
+        //Fragment manager setup
+        flContainer= findViewById(R.id.flContainer);
+        final FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(flContainer.getId(), homeFragment).commit();
+        bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
+
+        //This swiping works for PostFragment (Since HomeFragment is filled with items with their respective listeners there's no "free space for swiping",
+        //meaning I made its own swiper detector inside the recyclerView, and MapFragment is already filled with a map so not swiping space either)
+        //So there's no point making a case handler for every fragment the user is in since it would only consume unnecessary resources.
+        LinearLayout llScreen = findViewById(R.id.llScreen);
+        llScreen.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this) {
+            @Override
+            public void onSwipeLeft() {
+                leftSwipe();
+            }
+            @Override
+            public void onSwipeRight() {
+                rightSwipe();
+            }
+        });
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -58,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
                         fragment = postFragment;
                         break;
                 }
-                fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
+                fragmentManager.beginTransaction().replace(flContainer.getId(), fragment).commit();
                 return true;
             }
         });
@@ -71,20 +91,27 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
-        @Override
-        public boolean onOptionsItemSelected (MenuItem item){
-            if (item.getItemId() == R.id.logout) {
-                // navigate backwards to Login screen
-                ParseUser.logOut();
-                finish();
-                return true;
-            }
-            if (item.getItemId() == R.id.search) {
-                // navigate backwards to Login screen
-                onSearchRequested();
-                return true;
-            }
-
-            return super.onOptionsItemSelected(item);
+    @Override
+    public boolean onOptionsItemSelected (MenuItem item){
+        if (item.getItemId() == R.id.logout) {
+            // navigate backwards to Login screen
+            ParseUser.logOut();
+            finish();
+            return true;
         }
+        if (item.getItemId() == R.id.search) {
+            // navigate to search fragment
+            onSearchRequested();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
+
+    private void leftSwipe() {
+        bottomNavigationView.setSelectedItemId(R.id.home);
+    }
+    private void rightSwipe() {
+        bottomNavigationView.setSelectedItemId(R.id.map);
+    }
+
+}
