@@ -75,5 +75,13 @@
         android:layout_height="wrap_content"
         android:textColor="@color/black"
         android:text="@string/coordinates"/>
+    <Button
+        android:id="@+id/btnSearch"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:background="@color/base"
+        android:textColor="@color/white"
+        android:text="@string/search_posts"/>
     </LinearLayout>
 </LinearLayout>

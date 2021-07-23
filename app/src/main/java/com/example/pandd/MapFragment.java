@@ -5,14 +5,13 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 
 import com.example.pandd.models.Store;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -24,11 +23,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.parse.FindCallback;
 import com.parse.ParseException;
-import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import org.jetbrains.annotations.NotNull;
@@ -36,19 +33,16 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import es.dmoral.toasty.Toasty;
 import im.delight.android.location.SimpleLocation;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
     private static final String TAG = "MapFragment";
     private GoogleMap mMap;
-    Place location;
     private double userLat;
     private double userLong;
     private int km = 10;
     protected List<Store> allStores = new ArrayList<Store>();
-    List<Marker> markers = new ArrayList<Marker>();
     private SimpleLocation userLocation;
 
 
@@ -109,7 +103,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         LatLng latLng = new LatLng(userLat, userLong);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(12));
-        Marker userMarker = addMarker(latLng);
+        Marker userMarker = addMarker(latLng, -1);
         userMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
         userMarker.setTitle("You");
         userMarker.showInfoWindow();
@@ -138,14 +132,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             Store store = allStores.get(i);
             LatLng latLng = new LatLng(store.getDouble("lat"), store.getDouble("long"));
             if(withinRange(latLng,km)){
-                addMarker(latLng);
+                addMarker(latLng,i);
             }
         }
     }
 
-    public Marker addMarker(LatLng latLng){
+    public Marker addMarker(LatLng latLng, int index){
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
+        if(index != -1)
+        markerOptions.snippet(String.valueOf(index));
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
         return mMap.addMarker(markerOptions);
     }
@@ -153,28 +149,27 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     @Override
     public boolean onMarkerClick(@NonNull @NotNull Marker marker) {
-        //Query posts from each store when clicked on their marker (if it isn't not user marker)
-        if(marker.getTitle() != null){
+        //If the marker is the user location, just show its info once clikec
+        if(marker.getTitle() != null ){
             marker.showInfoWindow();
             return true;
         }
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Store");
-        query.whereEqualTo("long",marker.getPosition().longitude);
-        query.whereEqualTo("lat",marker.getPosition().latitude);
-        try {
-            List<ParseObject> objects = query.find();
-            ParseObject store = objects.get(0);
-            Intent intent = new Intent(getActivity(), SearchActivity.class);
-            intent.putExtra("field","store");
-            intent.putExtra("value",store.getObjectId());
-            getActivity().startActivity(intent);
 
-        } catch (ParseException e) {
-            Toasty.error(getActivity(),e.getMessage(),Toasty.LENGTH_SHORT).show();
-            Log.i(TAG, String.valueOf(marker.getPosition().longitude) + "  " + String.valueOf(marker.getPosition().latitude));
-            return false;
-        }
+        //If the marker is a store, get it's index (which is saved in its snippet) and get the Store object form allStores to set the StoreInfo dialog
+        int index = Integer.parseInt(marker.getSnippet());
+        Store storeObj = allStores.get(index);
+        Intent i = new Intent(getActivity(),StoreInfo.class);
+        i.putExtra("name",storeObj.getName());
+        i.putExtra("address",storeObj.getAddress());
+        i.putExtra("mapId",storeObj.getMapId());
+        String coordinates = getCoordinatesText(storeObj.getLat(),storeObj.getLong());
+        i.putExtra("coordinates",coordinates);
+        getActivity().startActivity(i);
 
         return true;
+    }
+
+    private String getCoordinatesText(Double lat, Double longitude) {
+        return String.format("%.3f", lat) + ", " + String.format("%.3f", longitude);
     }
 }
