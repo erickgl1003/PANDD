@@ -50,6 +50,7 @@ import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.common.InputImage;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -62,6 +63,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import com.parse.ParsePush;
 
 import es.dmoral.toasty.Toasty;
 
@@ -341,7 +346,8 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
         post.setDescription(description);
         post.setUser(currentUser);
         post.setProduct(product.toLowerCase());
-        post.setStore(getStore(place));
+        ParseObject store = getStore(place);
+        post.setStore(store);
 
         //Optional fields
         if(!barcode.equals(""))
@@ -362,8 +368,43 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
                 tvBarcode.setVisibility(View.GONE);
                 barcode = "";
                 Toasty.success(getActivity(),"Post successfully published!", Toast.LENGTH_SHORT).show();
+
+                getSubscribedUsers(store);
             }
         });
+    }
+
+    private void getSubscribedUsers(ParseObject store) {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Notify");
+        query.whereEqualTo("storeid",store.getString("mapId"));
+        try {
+            List<ParseObject> objects = query.find();
+            if(objects.size()  > 0){
+                for(ParseObject object : objects){
+                    Log.i("PostFragment", object.getObjectId());
+                    notifyUser(object.getParseUser("userid"), store.getString("name"));
+                }
+            }
+
+        } catch (ParseException error) {
+            Toasty.error(getActivity(),error.getMessage(),Toasty.LENGTH_SHORT).show();
+        }
+    }
+
+    private void notifyUser(ParseUser userid, String storeName) {
+        JSONObject data = new JSONObject();
+        ParseQuery<ParseInstallation> pushQuery = ParseInstallation.getQuery();
+        pushQuery.whereEqualTo("userId", userid);
+        try {
+            data.put("alert", "Store name: " + storeName);
+            data.put("title", "New post in a subscribed store!");
+        } catch ( JSONException e) {
+            throw new IllegalArgumentException("unexpected parsing error", e);
+        }
+        ParsePush push = new ParsePush();
+        push.setQuery(pushQuery);
+        push.setData(data);
+        push.sendInBackground();
     }
 
     //TODO: Use Google api function to retrieve real distance between locations

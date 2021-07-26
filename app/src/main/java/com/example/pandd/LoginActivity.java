@@ -75,10 +75,10 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void done(ParseUser user, ParseException e) {
                 if (e != null) {
+                    Toasty.error(LoginActivity.this,e.getMessage(),Toast.LENGTH_SHORT).show();
                     Log.e(TAG, "Issue with login ",e );
                     return;
                 }
-
                 Toasty.success(LoginActivity.this,"Success!",Toast.LENGTH_SHORT).show();
                 goMainActivity();
             }

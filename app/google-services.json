@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "910053225214",
+    "project_id": "pandd-72cb5",
+    "storage_bucket": "pandd-72cb5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:910053225214:android:8b767865c7470c80f66baf",
+        "android_client_info": {
+          "package_name": "com.example.pandd"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "910053225214-11d2ntf0rffrkfkq32698gj4a2drn12s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZSiA-7dcRWQfAfXO6C4dLxsYX97PH6Cw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "910053225214-11d2ntf0rffrkfkq32698gj4a2drn12s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

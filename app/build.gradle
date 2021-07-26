@@ -1,6 +1,8 @@
 plugins {
     id 'com.android.application'
     id 'com.google.secrets_gradle_plugin' version '0.4'
+    id 'com.google.gms.google-services'
+
 }
 
 android {
@@ -76,4 +78,10 @@ dependencies {
     implementation 'com.github.GrenderG:Toasty:1.5.0'
 
     implementation 'com.google.android.material:material:1.4.0'
+
+    implementation 'com.google.firebase:firebase-core:19.0.0'
+    implementation 'com.google.firebase:firebase-messaging:22.0.0'
+
+    implementation "com.github.parse-community.Parse-SDK-Android:fcm:1.25.0"
+    implementation 'com.parse.bolts:bolts-android:1.4.0'
 }

@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:layout_width="200dp"
+    android:layout_width="300dp"
     tools:context=".StoreInfo"
     android:background="@color/white"
     android:layout_height="wrap_content">
@@ -75,13 +75,29 @@
         android:layout_height="wrap_content"
         android:textColor="@color/black"
         android:text="@string/coordinates"/>
-    <Button
-        android:id="@+id/btnSearch"
-        android:layout_width="100dp"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:background="@color/base"
-        android:textColor="@color/white"
-        android:text="@string/search_posts"/>
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnNotify"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/base"
+            android:layout_margin="5dp"
+            android:textColor="@color/white"
+            android:text="@string/notify_me"/>
+        <Button
+            android:id="@+id/btnSearch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/base"
+            android:layout_margin="5dp"
+            android:textColor="@color/white"
+            android:text="@string/search_posts"/>
+    </LinearLayout>
     </LinearLayout>
 </LinearLayout>

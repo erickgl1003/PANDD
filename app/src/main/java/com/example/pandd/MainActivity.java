@@ -16,6 +16,7 @@ import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.parse.ParseInstallation;
 import com.parse.ParseUser;
 
 public class MainActivity extends AppCompatActivity{
@@ -32,6 +33,10 @@ public class MainActivity extends AppCompatActivity{
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_CODE);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+        installation.put("userId", ParseUser.getCurrentUser());
+        installation.saveInBackground();
 
         // Sets the Toolbar to act as the ActionBar for this Activity window.
         setSupportActionBar(toolbar);

@@ -104,7 +104,6 @@ public class HomeFragment extends Fragment {
 
         query.include(Post.KEY_USER);
         query.include(Post.KEY_STORE);
-        query.setLimit(20);
         query.addDescendingOrder("createdAt");
 
         query.findInBackground(new FindCallback<Post>() {
