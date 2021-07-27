@@ -17,6 +17,7 @@ public class Post extends ParseObject {
     public static final String KEY_STORE = "store";
     public static final String KEY_BARCODE = "barcode";
     public static final String KEY_PRODUCT = "product";
+    public static final String KEY_EXPIRING = "expiring";
 
     public Post(){}
 
@@ -61,6 +62,9 @@ public class Post extends ParseObject {
     public void setUser(ParseUser user){
         put(KEY_USER,user);
     }
+
+    public Date getExpiring(){return getDate(KEY_EXPIRING);}
+    public void setExpiring(Date expiring){put(KEY_EXPIRING, expiring);}
 
     public static String calculateTimeAgo(Date createdAt) {
 

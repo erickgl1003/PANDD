@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.format.DateUtils;
 import android.text.style.ForegroundColorSpan;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -25,6 +26,10 @@ import com.parse.ParseUser;
 import com.pedromassango.doubleclick.DoubleClick;
 import com.pedromassango.doubleclick.DoubleClickListener;
 
+import java.text.DateFormatSymbols;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -83,7 +88,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         //Bind every post to the recyclerView
         Post post = posts.get(position);
-        holder.bind(post, position);
+        holder.bind(post);
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
@@ -94,6 +99,8 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
         private TextView tvStore;
         private TextView tvBarcode;
         private TextView tvProduct;
+        private TextView tvExpiring;
+        private TextView tvExpired;
         private TextView tvDistance;
         private ImageView ivImage;
         private ImageView ivProfile;
@@ -110,12 +117,16 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             tvBarcode = itemView.findViewById(R.id.tvBarcode);
             tvProduct = itemView.findViewById(R.id.tvProduct);
             tvDistance = itemView.findViewById(R.id.tvDistance);
+            tvExpiring = itemView.findViewById(R.id.tvExpiring);
+            tvExpired = itemView.findViewById(R.id.tvExpired);
         }
 
-        public void bind(Post post, int position) {
+        public void bind(Post post) {
             //Sets both optional values as GONE, so they don't take space in the post.
             tvBarcode.setVisibility(View.GONE);
             ivImage.setVisibility(View.GONE);
+            tvExpiring.setVisibility(View.GONE);
+            tvExpired.setVisibility(View.GONE);
 
             Store storeObj = (Store) post.getStore();
 
@@ -126,7 +137,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             String store = "at " + storeObj.getName();
 
             //Set the store, description and username text
-            Spannable spannableStore = customize(store, 2, store.length());
+            Spannable spannableStore = customizeRed(store, 2, store.length());
             tvStore.setText(spannableStore, TextView.BufferType.SPANNABLE);
             tvDescription.setText(description);
             tvUsername.setText(username);
@@ -140,6 +151,19 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             product = product.substring(0,1).toUpperCase() + product.substring(1);
             tvProduct = setTextView(product,tvProduct,"Product: ");
             tvBarcode = setTextView(post.getBarcode(),tvBarcode,"Barcode: ");
+
+            //Set post's expiring date
+            Date expiring = post.getExpiring();
+            if(expiring != null){
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(expiring);
+                tvExpiring = setTextView(formatDate(cal),tvExpiring,"Expires: ");
+
+                Calendar today = Calendar.getInstance();
+                if(cal.compareTo(today) < 1)
+                    tvExpired.setVisibility(View.VISIBLE);
+            }
+
 
             //Set post's timeAgo stamp
             Date createdAt = post.getCreatedAt();
@@ -182,6 +206,12 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
         }
     }
 
+    private String formatDate(Calendar cal) {
+        DateFormatSymbols dateFormatSymbols = new DateFormatSymbols();
+
+        return dateFormatSymbols.getMonths()[cal.get(Calendar.MONTH)] + " "  + cal.get(Calendar.DAY_OF_MONTH)+ ", " + cal.get(Calendar.YEAR);
+    }
+
     private String getCoordinatesText(Double lat, Double longitude) {
         return String.format("%.3f", lat) + ", " + String.format("%.3f", longitude);
     }
@@ -189,7 +219,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
     private TextView setTextView(String postText, TextView textView, String preText) {
         if(postText != null) {
             String textField = preText + postText;
-            Spannable spannableProduct = customize(textField, 8, textField.length());
+            Spannable spannableProduct = customizeBlack(textField, 8, textField.length());
             textView.setText(spannableProduct, TextView.BufferType.SPANNABLE);
             textView.setVisibility(View.VISIBLE);
         }
@@ -210,7 +240,14 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
     }
 
 
-    private Spannable customize(String text, int start, int end){
+    private Spannable customizeBlack(String text, int start, int end){
+        Spannable spannableText = new SpannableString(text);
+        spannableText.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD),start,end,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableText.setSpan(new ForegroundColorSpan(context.getResources().getColor(android.R.color.black)),start,end,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return spannableText;
+    }
+
+    private Spannable customizeRed(String text, int start, int end){
         Spannable spannableText = new SpannableString(text);
         spannableText.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD),start,end,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         spannableText.setSpan(new ForegroundColorSpan(primaryColor),start,end,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);

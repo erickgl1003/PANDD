@@ -86,16 +86,18 @@
             android:id="@+id/btnNotify"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/base"
+            android:background="@drawable/roundedbutton"
             android:layout_margin="5dp"
+            android:padding="5dp"
             android:textColor="@color/white"
             android:text="@string/notify_me"/>
         <Button
             android:id="@+id/btnSearch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/base"
+            android:background="@drawable/roundedbutton"
             android:layout_margin="5dp"
+            android:padding="5dp"
             android:textColor="@color/white"
             android:text="@string/search_posts"/>
     </LinearLayout>

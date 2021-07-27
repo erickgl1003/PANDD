@@ -63,7 +63,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.json.JSONException;
@@ -189,7 +192,15 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
             public void onClick(View v) {
                 String description = etDescription.getText().toString();
                 String product = etProduct.getText().toString();
-
+                Date expiring = null;
+                if(!etExpiring.getText().toString().isEmpty()) {
+                    try {
+                        expiring = new SimpleDateFormat("dd/MM/yyyy").parse(etExpiring.getText().toString());
+                    } catch (java.text.ParseException e) {
+                        //Should never happen because dates are obtained through a datePicker, but in case it does:
+                        Toasty.error(getActivity(), "Error formatting date",Toast.LENGTH_SHORT).show();
+                    }
+                }
 
                 if(verifyEmpty(description, "Description")) return;
                 if(verifyEmpty(product, "Product")) return;
@@ -200,7 +211,7 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
                 }
 
                 ParseUser currentUser = ParseUser.getCurrentUser();
-                savePost(description, product, barcode, location, currentUser, imagT);
+                savePost(description, product, barcode, location, currentUser, imagT,expiring);
             }
         });
     }
@@ -210,12 +221,17 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 // Month +1 because January is returned as 0
-                final String selectedDate = day + " / " + (month+1) + " / " + year;
+                final String selectedDate = twoDigits(day) + "/" + twoDigits(month+1) + "/" + year;
                 etExpiring.setText(selectedDate);
             }
         });
 
         newFragment.show(getActivity().getSupportFragmentManager(), "datePicker");
+    }
+
+    //Add a 0 before the number if it is a single digit value
+    private String twoDigits(int n) {
+        return (n<=9) ? ("0"+n) : String.valueOf(n);
     }
 
 
@@ -363,7 +379,7 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
         return resizedBitmap;
     }
 
-    private void savePost(String description, String product, String code, Place place, ParseUser currentUser, File photoFile) {
+    private void savePost(String description, String product, String code, Place place, ParseUser currentUser, File photoFile, Date expiring) {
         Post post = new Post();
         post.setDescription(description);
         post.setUser(currentUser);
@@ -376,6 +392,8 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
             post.setBarcode(code);
         if(photoFile != null)
             post.setImage(new ParseFile(photoFile));
+        if(expiring != null)
+            post.setExpiring(expiring);
 
         post.saveInBackground(new SaveCallback() {
             @Override
@@ -389,6 +407,7 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
                 etProduct.setText("");
                 tvBarcode.setVisibility(View.GONE);
                 barcode = "";
+                etExpiring.setText("");
                 Toasty.success(getActivity(),"Post successfully published!", Toast.LENGTH_SHORT).show();
 
                 getSubscribedUsers(store);

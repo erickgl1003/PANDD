@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity{
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
+        //Set the current Parse installation with the current user to receive its notifications.
         ParseInstallation installation = ParseInstallation.getCurrentInstallation();
         installation.put("userId", ParseUser.getCurrentUser());
         installation.saveInBackground();
