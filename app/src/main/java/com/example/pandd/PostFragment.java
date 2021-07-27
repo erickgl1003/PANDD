@@ -377,11 +377,13 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
     private void getSubscribedUsers(ParseObject store) {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Notify");
         query.whereEqualTo("storeid",store.getString("mapId"));
+        query.whereNotEqualTo("userid", ParseUser.getCurrentUser());
+
         try {
             List<ParseObject> objects = query.find();
             if(objects.size()  > 0){
                 for(ParseObject object : objects){
-                    Log.i("PostFragment", object.getObjectId());
+                    //If the current user is subscribed, don't notify him, but everyone else.
                     notifyUser(object.getParseUser("userid"), store.getString("name"));
                 }
             }
@@ -394,13 +396,17 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
     private void notifyUser(ParseUser userid, String storeName) {
         JSONObject data = new JSONObject();
         ParseQuery<ParseInstallation> pushQuery = ParseInstallation.getQuery();
+        //Find the installation instance where the user is logged in (if any)
         pushQuery.whereEqualTo("userId", userid);
+
         try {
             data.put("alert", "Store name: " + storeName);
             data.put("title", "New post in a subscribed store!");
-        } catch ( JSONException e) {
-            throw new IllegalArgumentException("unexpected parsing error", e);
+        } catch (JSONException e) {
+            Toasty.error(getActivity(),"Error notifying users",Toast.LENGTH_SHORT).show();
+            Log.i(TAG,e.getMessage());
         }
+
         ParsePush push = new ParsePush();
         push.setQuery(pushQuery);
         push.setData(data);
