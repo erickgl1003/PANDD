@@ -1,6 +1,7 @@
 package com.example.pandd;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -19,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -79,6 +81,7 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
     private TextView tvBarcode;
     private EditText etDescription;
     private EditText etProduct;
+    private EditText etExpiring;
     private Button btnCaptureImage;
     private Button btnSubmit;
     private Button btnScan;
@@ -91,9 +94,6 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
 
     private boolean locationFilled = false;
     String barcode = "";
-
-    File photoFile;
-    public String photoFileName = "photo.jpg";
 
     private int primaryColor;
 
@@ -153,13 +153,22 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
         tvBarcode = view.findViewById(R.id.tvBarcode);
         etDescription = view.findViewById(R.id.etDescription);
         etProduct = view.findViewById(R.id.etProduct);
+        etExpiring = view.findViewById(R.id.etExpiring);
         btnCaptureImage = view.findViewById(R.id.btnCapture);
         btnSubmit = view.findViewById(R.id.btnSubmit);
         btnScan = view.findViewById(R.id.btnScan);
 
+        //Get the primary color from the app for styling
         TypedValue typedValue = new TypedValue();
         getActivity().getTheme().resolveAttribute(R.attr.colorPrimary, typedValue, true);
         primaryColor = typedValue.data;
+
+        etExpiring.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDatePickerDialog();
+            }
+        });
 
         btnScan.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -194,6 +203,19 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
                 savePost(description, product, barcode, location, currentUser, imagT);
             }
         });
+    }
+
+    private void showDatePickerDialog() {
+        DatePickerFragment newFragment = DatePickerFragment.newInstance(new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                // Month +1 because January is returned as 0
+                final String selectedDate = day + " / " + (month+1) + " / " + year;
+                etExpiring.setText(selectedDate);
+            }
+        });
+
+        newFragment.show(getActivity().getSupportFragmentManager(), "datePicker");
     }
 
 

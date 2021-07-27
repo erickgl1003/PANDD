@@ -43,6 +43,16 @@
                 android:ems="10"
                 android:hint="@string/product_featured_in_promo_discount" />
 
+            <EditText
+                android:id="@+id/etExpiring"
+                android:inputType="date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:focusable="false"
+                android:clickable="true"
+                android:hint="@string/expiring_date"/>
+
             <TextView
                 android:id="@+id/tvBarcode"
                 android:layout_width="wrap_content"

@@ -27,4 +27,5 @@
     <string name="search_posts">Search posts</string>
     <string name="subscribe">Subscribe</string>
     <string name="notify_me">Notify me</string>
+    <string name="expiring_date">Expiring date</string>
 </resources>
