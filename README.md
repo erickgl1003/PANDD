@@ -33,12 +33,16 @@ Informative and social media app that allows users to post discounts and promos 
 ## Optional Nice-to-have Stories
 
 * [ ] User can mark as useful or useless promos and discounts posts
-* [ ] User can set promos and discounts starting and expiring dates in their posts
-* [ ] User can set their profiles with a profile photo
-* [ ] User can add an image to their posts
+* [X] User can set promos and discounts expiring dates in their posts
+* [X] User can set their profiles with a profile photo
+* [X] User can add an image to their posts
 * [ ] User can follow/unfollow other users
 * [ ] User can see a list of their followers and a list of their following
-* [ ] User can search by product name
+* [X] User can search by product name
+
+## Additional stories
+
+* [X] User can subscribe to a store and get notifications whenever a new post is made in that store
 
 ## Screen Archetypes
 
