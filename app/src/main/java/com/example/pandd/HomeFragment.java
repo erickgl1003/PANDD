@@ -1,5 +1,6 @@
 package com.example.pandd;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -33,9 +34,15 @@ public class HomeFragment extends Fragment {
     private SimpleLocation location;
     FragmentManager fragmentManager;
     BottomNavigationView bottomNavigationView;
+    ProgressDialog progressdialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
+        //Set progressdialog properties
+        progressdialog = new ProgressDialog(getActivity(), R.style.AppCompatAlertDialogStyle);
+        progressdialog.setMessage("Please wait...");
+        progressdialog.setCancelable(false);
+        progressdialog.show();
         return inflater.inflate(R.layout.fragment_home, parent, false);
     }
 
@@ -43,6 +50,8 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Context context = getActivity();
+
+
 
         //Initialize SimpleLocation and request permissions to get the user actual location
         location = new SimpleLocation(context);
@@ -116,6 +125,7 @@ public class HomeFragment extends Fragment {
                 
                 allPosts.addAll(posts);
                 adapter.notifyDataSetChanged();
+                progressdialog.dismiss();
             }
         });
     }

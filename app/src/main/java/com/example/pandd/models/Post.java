@@ -80,19 +80,19 @@ public class Post extends ParseObject {
 
             final long diff = now - time;
             if (diff < MINUTE_MILLIS) {
-                return "just now";
+                return "posted just now";
             } else if (diff < 2 * MINUTE_MILLIS) {
-                return "a minute ago";
+                return "posted a minute ago";
             } else if (diff < 50 * MINUTE_MILLIS) {
-                return diff / MINUTE_MILLIS + " m";
+                return "posted "+diff / MINUTE_MILLIS + " m";
             } else if (diff < 90 * MINUTE_MILLIS) {
-                return "an hour ago";
+                return "posted an hour ago";
             } else if (diff < 24 * HOUR_MILLIS) {
-                return diff / HOUR_MILLIS + " h";
+                return "posted "+ diff / HOUR_MILLIS + " h";
             } else if (diff < 48 * HOUR_MILLIS) {
-                return "yesterday";
+                return "posted yesterday";
             } else {
-                return diff / DAY_MILLIS + " days ago";
+                return "posted "+ diff / DAY_MILLIS + " days ago";
             }
         } catch (Exception e) {
             Log.i("Error:", "getRelativeTimeAgo failed", e);

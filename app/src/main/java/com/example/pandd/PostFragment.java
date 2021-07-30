@@ -2,6 +2,7 @@ package com.example.pandd;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -46,6 +47,7 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.mlkit.vision.barcode.Barcode;
 import com.google.mlkit.vision.barcode.BarcodeScanner;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
@@ -88,6 +90,7 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
     private Button btnCaptureImage;
     private Button btnSubmit;
     private Button btnScan;
+    private BottomNavigationView bottomNavigationView;
 
     Bitmap bitmap = null;
     File imagT = null;
@@ -99,6 +102,8 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
     String barcode = "";
 
     private int primaryColor;
+
+    ProgressDialog progressdialog = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
@@ -160,6 +165,12 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
         btnCaptureImage = view.findViewById(R.id.btnCapture);
         btnSubmit = view.findViewById(R.id.btnSubmit);
         btnScan = view.findViewById(R.id.btnScan);
+        bottomNavigationView = (BottomNavigationView) getActivity().findViewById(R.id.bottom_navigation);
+
+        //Set progressdialog properties
+        progressdialog = new ProgressDialog(getActivity(),R.style.AppCompatAlertDialogStyle);
+        progressdialog.setMessage("Please wait...");
+        progressdialog.setCancelable(false);
 
         //Get the primary color from the app for styling
         TypedValue typedValue = new TypedValue();
@@ -209,6 +220,9 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
                     Toasty.warning(getActivity(),"Store can't be empty",Toast.LENGTH_SHORT).show();
                     return;
                 }
+
+                //Show progress dialog while post is made
+                progressdialog.show();
 
                 ParseUser currentUser = ParseUser.getCurrentUser();
                 savePost(description, product, barcode, location, currentUser, imagT,expiring);
@@ -409,7 +423,7 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
                 barcode = "";
                 etExpiring.setText("");
                 Toasty.success(getActivity(),"Post successfully published!", Toast.LENGTH_SHORT).show();
-
+                progressdialog.dismiss();
                 getSubscribedUsers(store);
             }
         });
@@ -428,10 +442,12 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
                     notifyUser(object.getParseUser("userid"), store.getString("name"));
                 }
             }
+            bottomNavigationView.setSelectedItemId(R.id.home);
 
         } catch (ParseException error) {
             Toasty.error(getActivity(),error.getMessage(),Toasty.LENGTH_SHORT).show();
         }
+
     }
 
     private void notifyUser(ParseUser userid, String storeName) {
@@ -452,6 +468,7 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
         push.setQuery(pushQuery);
         push.setData(data);
         push.sendInBackground();
+
     }
 
     //TODO: Use Google api function to retrieve real distance between locations

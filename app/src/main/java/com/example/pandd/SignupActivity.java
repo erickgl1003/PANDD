@@ -2,6 +2,7 @@ package com.example.pandd;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
@@ -42,6 +43,7 @@ public class SignupActivity extends AppCompatActivity {
     private Button btnSignup;
     private Button btnPhoto;
     private TextView tvLog;
+    ProgressDialog progressdialog;
 
     Bitmap bitmap = null;
     File imagT = null;
@@ -58,6 +60,11 @@ public class SignupActivity extends AppCompatActivity {
         btnSignup = findViewById(R.id.btnSignup);
         btnPhoto = findViewById(R.id.btnPhoto);
         tvLog = findViewById(R.id.tvLog);
+
+        //Set progressdialog properties
+        progressdialog = new ProgressDialog(this, R.style.AppCompatAlertDialogStyle);
+        progressdialog.setMessage("Please wait...");
+        progressdialog.setCancelable(false);
 
 
         btnPhoto.setOnClickListener(new View.OnClickListener() {
@@ -85,6 +92,7 @@ public class SignupActivity extends AppCompatActivity {
                     Toasty.warning(SignupActivity.this, "Passwords don't match!", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                progressdialog.show();
                 signUser(username, password, email,  imagT);
             }
         });
@@ -164,6 +172,7 @@ public class SignupActivity extends AppCompatActivity {
                     savePhoto(curr, new ParseFile(file));
                 }
                 else{
+                    progressdialog.dismiss();
                     Toasty.error(SignupActivity.this,e.getMessage(),Toast.LENGTH_LONG).show();
                     Log.e(TAG, "Error signing user:" + e.getMessage() + "\n" + e.getCause());
                 }
@@ -177,9 +186,11 @@ public class SignupActivity extends AppCompatActivity {
             @Override
             public void done(ParseException e) {
                 if(e == null){
+                    progressdialog.dismiss();
                     goMainAcitivty();
                 }
                 else{
+                    progressdialog.dismiss();
                     Toasty.error(SignupActivity.this, e.getMessage(),Toast.LENGTH_SHORT).show();
                     Log.e(TAG, "Error saving photo:" + e.getMessage() + "\n" + e.getCause());
                 }

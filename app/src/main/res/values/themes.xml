@@ -30,4 +30,8 @@
         <item name="windowNoTitle">true</item>
         <item name="android:windowNoTitle">true</item>
     </style>
+
+    <style name="AppCompatAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorAccent">@color/base</item>
+    </style>
 </resources>
