@@ -43,6 +43,7 @@ public class HomeFragment extends Fragment {
         progressdialog.setMessage("Please wait...");
         progressdialog.setCancelable(false);
         progressdialog.show();
+
         return inflater.inflate(R.layout.fragment_home, parent, false);
     }
 
@@ -130,15 +131,4 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        location.beginUpdates();
-    }
-
-    @Override
-    public void onPause() {
-        location.endUpdates();
-        super.onPause();
-    }
 }
