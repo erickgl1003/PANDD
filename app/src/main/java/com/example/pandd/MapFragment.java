@@ -45,10 +45,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     protected List<Store> allStores = new ArrayList<Store>();
     private SimpleLocation userLocation;
 
-
     public MapFragment() {
-        // Required empty public constructor
+        //Required empty public constructor because it's a Fragment
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
 

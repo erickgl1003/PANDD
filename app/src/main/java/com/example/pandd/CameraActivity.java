@@ -42,7 +42,7 @@ public class CameraActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
 
-        // Check for permissions
+        //Check for permissions
         if (ContextCompat.checkSelfPermission(getBaseContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             startCamera();
         } else {
@@ -51,7 +51,7 @@ public class CameraActivity extends AppCompatActivity {
                     this, permissionsArray, 10);
         }
 
-        // set up button for image capture
+        //Set up button for image capture
         Button camera_capture_button = findViewById(R.id.camera_capture_button);
         camera_capture_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,7 +60,7 @@ public class CameraActivity extends AppCompatActivity {
             }
         });
 
-        // setting up the output directory
+        //Setting up the output directory
         outputDirectory = getOutputDirectory();
         cameraExecutor = Executors.newSingleThreadExecutor();
     }
@@ -69,12 +69,11 @@ public class CameraActivity extends AppCompatActivity {
         if(imageCapture == null){
             return;
         }
-
-        // set up the photo file for storing the photo
+        //Set up the photo file for storing the photo
         File photoFile = new File(outputDirectory, new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS", Locale.US)
                 .format(System.currentTimeMillis()) + ".jpg");
 
-        // save the image and wait for callback.
+        //Save the image and wait for callback.
         ImageCapture.OutputFileOptions fileOptions = new ImageCapture.OutputFileOptions.Builder(photoFile).build();
         imageCapture.takePicture(fileOptions, ContextCompat.getMainExecutor(this), new ImageCapture.OnImageSavedCallback() {
             @Override
@@ -105,8 +104,7 @@ public class CameraActivity extends AppCompatActivity {
                 } catch (Exception e) {
                     Toasty.error(CameraActivity.this, e.getMessage(),Toast.LENGTH_LONG).show();
                 }
-
-                // Set up preview window
+                //Set up preview window
                 Preview preview = new Preview.Builder().build();
                 PreviewView viewFinder = findViewById(R.id.viewFinder);
                 preview.setSurfaceProvider(viewFinder.getSurfaceProvider());
@@ -115,7 +113,7 @@ public class CameraActivity extends AppCompatActivity {
                         .build();
                 CameraSelector cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA;
 
-                // Tie the preview, camera selector and imageCapture together via the cameraProvider
+                //Tie the preview, camera selector and imageCapture together via the cameraProvider
                 try{
                     cameraProvider.unbindAll();
                     cameraProvider.bindToLifecycle(CameraActivity.this, cameraSelector, preview, imageCapture);

@@ -105,6 +105,10 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
 
     ProgressDialog progressdialog = null;
 
+    public PostFragment(){
+        //Required empty public constructor because it's a Fragment
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
 
@@ -239,7 +243,6 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
                 etExpiring.setText(selectedDate);
             }
         });
-
         newFragment.show(getActivity().getSupportFragmentManager(), "datePicker");
     }
 
@@ -247,7 +250,6 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
     private String twoDigits(int n) {
         return (n<=9) ? ("0"+n) : String.valueOf(n);
     }
-
 
     private boolean verifyEmpty(String string, String field) {
         if(string.isEmpty()){
@@ -262,8 +264,8 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
         startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
     }
 
-
     private void scan(Bitmap takenImage) {
+        //Receives the image in bitmap and uses BarcodeScanner.process to find the barcodes.
         InputImage image = InputImage.fromBitmap(takenImage, 0);
         BarcodeScanner scanner = BarcodeScanning.getClient();
 
@@ -319,7 +321,6 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
     }
 
     public void addMarker(Place place){
-
         MarkerOptions markerOptions = new MarkerOptions();
 
         markerOptions.position(place.getLatLng());
@@ -372,8 +373,6 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
                 Toasty.warning(getActivity(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
             }
         }
-
-
     }
 
     public Bitmap getResizedBitmap(Bitmap bm) {
@@ -383,11 +382,11 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
         int newHeight = height/2;
         float scaleWidth = ((float) newWidth) / width;
         float scaleHeight = ((float) newHeight) / height;
-        // CREATE A MATRIX FOR THE MANIPULATION
+        // Create a Matrix to manipulate it
         Matrix matrix = new Matrix();
         matrix.postScale(scaleWidth, scaleHeight);
 
-        // "RECREATE" THE NEW BITMAP
+        // "Recreate" the new, resized, bitmap
         Bitmap resizedBitmap = Bitmap.createBitmap(
                 bm, 0, 0, width, height, matrix, false);
         return resizedBitmap;
@@ -455,7 +454,6 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
         ParseQuery<ParseInstallation> pushQuery = ParseInstallation.getQuery();
         //Find the installation instance where the user is logged in (if any)
         pushQuery.whereEqualTo("userId", userid);
-
         try {
             data.put("alert", "Store name: " + storeName);
             data.put("title", "New post in a subscribed store!");
@@ -477,7 +475,7 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
         query.whereEqualTo("mapId",place.getId());
         try {
             List<ParseObject> objects = query.find();
-            if(objects.isEmpty()){
+            if(objects.isEmpty()){//If the store isn't registered in the database, create it
                 Store store = new Store();
                 store.setName(place.getName());
                 store.setAddress(place.getAddress());
@@ -499,7 +497,7 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
         return null;
     }
 
-    public Spannable customize(String text, int start, int end){
+    public Spannable customize(String text, int start, int end){//Custom Spanabble to give colors and style to text
         Spannable spannableText = new SpannableString(text);
         spannableText.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD),start,end,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         spannableText.setSpan(new ForegroundColorSpan(primaryColor),start,end,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);

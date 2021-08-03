@@ -6,9 +6,8 @@ import androidx.appcompat.widget.Toolbar;
 import com.github.amlcurran.showcaseview.targets.Target;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
 
-
+//Class to get the ViewTarget of items inside the Toolbar (for ShowcaseView tutorial purposes)
 public class ToolbarActionItemTarget implements Target {
-
     private final Toolbar toolbar;
     private final int menuItemId;
 

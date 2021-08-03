@@ -36,6 +36,10 @@ public class HomeFragment extends Fragment {
     BottomNavigationView bottomNavigationView;
     ProgressDialog progressdialog;
 
+    public HomeFragment(){
+        //Required empty public constructor because it's a Fragment
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         //Set progressdialog properties
@@ -52,8 +56,6 @@ public class HomeFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Context context = getActivity();
 
-
-
         //Initialize SimpleLocation and request permissions to get the user actual location
         location = new SimpleLocation(context);
         if (!location.hasLocationEnabled()) {
@@ -62,7 +64,6 @@ public class HomeFragment extends Fragment {
 
         //Set navigation item when fragments loads by swiping
         bottomNavigationView = (BottomNavigationView) getActivity().findViewById(R.id.bottom_navigation);
-
 
         //Set up the recyclerView to show the posts
         rvPosts = view.findViewById(R.id.rvPosts);
@@ -96,7 +97,6 @@ public class HomeFragment extends Fragment {
                 swipeContainer.setRefreshing(false);
             }
         });
-
         swipeContainer.setColorSchemeResources(android.R.color.holo_red_dark,
                 android.R.color.holo_red_light);
     }
@@ -111,7 +111,6 @@ public class HomeFragment extends Fragment {
 
     protected void queryPosts() {
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
-
         query.include(Post.KEY_USER);
         query.include(Post.KEY_STORE);
         query.addDescendingOrder("createdAt");

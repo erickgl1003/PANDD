@@ -102,12 +102,10 @@ public class MainActivity extends AppCompatActivity{
                 return true;
             }
         });
-
-
     }
 
     private void tutorialBottomNavigationView() {
-
+        //Create the sequence in the tutorial of showcase views for BottomNavigationView
         ShowcaseView.Builder svHome = showcaseBuilder(new ViewTarget(R.id.home, this));
         svHome.setContentTitle("Home")
                 .setContentText("Click the Home button to see all the posts")
@@ -140,6 +138,7 @@ public class MainActivity extends AppCompatActivity{
     }
 
     private void tutorialToolbar() {
+        //Create the sequence in the tutorial of showcase views for Toolbar (and Post's store)
         ShowcaseView.Builder svRecycler = showcaseBuilder(new ViewTarget(R.id.rvPosts, this));
         svRecycler.setContentTitle("Stores")
                 .setContentText("Click the store name in any post to display info about it. Double click it to do a search of all posts in that store.")
@@ -171,7 +170,6 @@ public class MainActivity extends AppCompatActivity{
                 .blockAllTouches();
     }
 
-
     @Override
     public boolean onCreateOptionsMenu (Menu menu){
         //Inflate the menu
@@ -181,8 +179,6 @@ public class MainActivity extends AppCompatActivity{
         tutorialBottomNavigationView();
         return true;
     }
-
-
 
     @Override
     public boolean onOptionsItemSelected (MenuItem item){
@@ -200,11 +196,6 @@ public class MainActivity extends AppCompatActivity{
         return super.onOptionsItemSelected(item);
     }
 
-    private void leftSwipe() {
-        bottomNavigationView.setSelectedItemId(R.id.home);
-    }
-    private void rightSwipe() {
-        bottomNavigationView.setSelectedItemId(R.id.map);
-    }
-
+    private void leftSwipe() { bottomNavigationView.setSelectedItemId(R.id.home); }
+    private void rightSwipe() { bottomNavigationView.setSelectedItemId(R.id.map); }
 }

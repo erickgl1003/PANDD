@@ -62,12 +62,9 @@ public class SearchActivity extends AppCompatActivity {
             String value = intent.getStringExtra("value");
             queryPosts(field, value);
         }
-
-
     }
 
     protected void queryPosts(String field, String value) {
-
         ParseQuery<Post> query = ParseQuery.getQuery(Post.class);
 
         query.include(Post.KEY_USER);

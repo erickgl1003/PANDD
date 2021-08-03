@@ -11,7 +11,6 @@
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">@color/black</item>
-
     </style>
 
     <style name="MyDatePickerDialogTheme" parent="android:Theme.Material.Light.Dialog">
@@ -24,6 +23,7 @@
         <!-- Background color when SELECTED -->
         <item name="colorControlHighlight">@color/black</item>
     </style>
+
     <style name="MyDialogTheme" parent="Theme.AppCompat.Dialog">
         <item name="windowActionBar">false</item>
         <item name="titleEnabled">false</item>
