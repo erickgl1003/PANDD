@@ -1,7 +1,6 @@
 package com.example.pandd;
 
 import android.app.Application;
-import android.app.Notification;
 
 import com.example.pandd.models.Notify;
 import com.example.pandd.models.Post;

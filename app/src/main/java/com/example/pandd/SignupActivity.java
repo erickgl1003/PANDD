@@ -187,7 +187,7 @@ public class SignupActivity extends AppCompatActivity {
             public void done(ParseException e) {
                 if(e == null){
                     progressdialog.dismiss();
-                    goMainAcitivty();
+                    goMainActivity();
                 }
                 else{
                     progressdialog.dismiss();
@@ -198,8 +198,7 @@ public class SignupActivity extends AppCompatActivity {
         });
     }
 
-
-    private void goMainAcitivty() {
+    private void goMainActivity() {
         Intent i = new Intent(this,MainActivity.class);
         startActivity(i);
         finish();

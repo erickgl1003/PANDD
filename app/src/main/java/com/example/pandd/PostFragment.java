@@ -56,24 +56,23 @@ import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseInstallation;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-import com.parse.ParsePush;
 
 import es.dmoral.toasty.Toasty;
 
@@ -497,7 +496,7 @@ public class PostFragment extends Fragment implements OnMapReadyCallback {
         return null;
     }
 
-    public Spannable customize(String text, int start, int end){//Custom Spanabble to give colors and style to text
+    public Spannable customize(String text, int start, int end){//Custom Spannable to give colors and style to text
         Spannable spannableText = new SpannableString(text);
         spannableText.setSpan(new android.text.style.StyleSpan(android.graphics.Typeface.BOLD),start,end,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         spannableText.setSpan(new ForegroundColorSpan(primaryColor),start,end,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);

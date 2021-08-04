@@ -2,7 +2,6 @@ package com.example.pandd;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -12,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.pandd.models.Notify;
 import com.parse.DeleteCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -58,7 +56,7 @@ public class StoreInfo extends AppCompatActivity {
 
         alreadyInNotify = queryUserNotified();
         if(alreadyInNotify){
-            btnNotify.setText("Stop notifying me");
+            btnNotify.setText(R.string.stopNotify);
         }
 
         btnNotify.setOnClickListener(new View.OnClickListener() {
@@ -71,18 +69,7 @@ public class StoreInfo extends AppCompatActivity {
                     try {
                         List<ParseObject> objects = query.find();
                         ParseObject row = objects.get(0);
-                        row.deleteInBackground(new DeleteCallback() {
-                            @Override
-                            public void done(ParseException e) {
-                                if(e != null) {
-                                    Toasty.error(StoreInfo.this,"Error while unsubscribing", Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
-                                btnNotify.setText("Notify me");
-                                alreadyInNotify = false;
-                                Toasty.success(StoreInfo.this,"Notifications deactivated!", Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                        deleteSubscription(row);
                     } catch (ParseException e) {
                         Toasty.error(StoreInfo.this,e.getMessage(),Toasty.LENGTH_SHORT).show();
                     }
@@ -91,19 +78,7 @@ public class StoreInfo extends AppCompatActivity {
                     Notify notify = new Notify();
                     notify.setStoreId(mapId);
                     notify.setUserId(userId);
-
-                    notify.saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            if(e != null) {
-                                Toasty.error(StoreInfo.this,"Error while subscribing", Toast.LENGTH_SHORT).show();
-                                return;
-                            }
-                            btnNotify.setText("Stop notifying me");
-                            alreadyInNotify = true;
-                            Toasty.success(StoreInfo.this,"Notifications enabled!", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                    createSubscription(notify);
                 }
             }
         });
@@ -126,6 +101,36 @@ public class StoreInfo extends AppCompatActivity {
                 } catch (ParseException e) {
                     Toasty.error(StoreInfo.this,e.getMessage(),Toasty.LENGTH_SHORT).show();
                 }
+            }
+        });
+    }
+
+    private void createSubscription(Notify notify) {
+        notify.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if(e != null) {
+                    Toasty.error(StoreInfo.this,"Error while subscribing", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                btnNotify.setText(R.string.stopNotify);
+                alreadyInNotify = true;
+                Toasty.success(StoreInfo.this,"Notifications enabled!", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void deleteSubscription(ParseObject row) {
+        row.deleteInBackground(new DeleteCallback() {
+            @Override
+            public void done(ParseException e) {
+                if(e != null) {
+                    Toasty.error(StoreInfo.this,"Error while unsubscribing", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                btnNotify.setText(R.string.notify);
+                alreadyInNotify = false;
+                Toasty.success(StoreInfo.this,"Notifications deactivated!", Toast.LENGTH_SHORT).show();
             }
         });
     }

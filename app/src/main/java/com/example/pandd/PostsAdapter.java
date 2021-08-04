@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.text.Spannable;
 import android.text.SpannableString;
-import android.text.format.DateUtils;
 import android.text.style.ForegroundColorSpan;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -27,8 +26,6 @@ import com.pedromassango.doubleclick.DoubleClick;
 import com.pedromassango.doubleclick.DoubleClickListener;
 
 import java.text.DateFormatSymbols;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -163,7 +160,6 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
                 if(cal.compareTo(today) < 1)
                     tvExpired.setVisibility(View.VISIBLE);
             }
-
 
             //Set post's timeAgo stamp
             Date createdAt = post.getCreatedAt();

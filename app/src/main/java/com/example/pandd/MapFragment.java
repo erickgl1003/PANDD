@@ -98,7 +98,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         userLat = userLocation.getLatitude();
         userLong = userLocation.getLongitude();
 
-
         //Set the map to focus on the user location
         LatLng latLng = new LatLng(userLat, userLong);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
@@ -109,6 +108,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         userMarker.showInfoWindow();
         queryStores();
     }
+
     protected void queryStores() {
         ParseQuery<Store> query = ParseQuery.getQuery(Store.class);
         query.addDescendingOrder("createdAt");

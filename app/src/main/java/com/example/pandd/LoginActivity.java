@@ -38,6 +38,7 @@ public class LoginActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etPassword);
         btnLogin = findViewById(R.id.btnLogin);
         tvSign = findViewById(R.id.tvSign);
+
         btnLogin.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -58,7 +59,6 @@ public class LoginActivity extends AppCompatActivity {
                 finish();
             }
         });
-
     }
 
     private boolean verifyEmpty(String string, String field) {

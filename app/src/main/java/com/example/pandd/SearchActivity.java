@@ -92,18 +92,5 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        location.beginUpdates();
-    }
-
-    @Override
-    public void onPause() {
-        location.endUpdates();
-        super.onPause();
-    }
-
 }
 
