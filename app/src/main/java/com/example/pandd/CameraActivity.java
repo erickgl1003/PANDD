@@ -36,7 +36,6 @@ public class CameraActivity extends AppCompatActivity {
     File outputDirectory;
     ExecutorService cameraExecutor;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

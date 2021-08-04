@@ -146,7 +146,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         return mMap.addMarker(markerOptions);
     }
 
-
     @Override
     public boolean onMarkerClick(@NonNull @NotNull Marker marker) {
         //If the marker is the user location, just show its info once clikec
