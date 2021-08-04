@@ -1,7 +1,7 @@
 # PANDD
 **Promos and Discounts Info Sharing App** allows users to post discounts and promos they know about, while being able to register code numbers of the products in discount and the store they found them in. Users can then check if there's any post containing said info in their area and make use of it!
 
-Time spent: **X** hours spent in total
+Time spent: **50** hours spent in total
 
 ## Table of Contents
 * Description
