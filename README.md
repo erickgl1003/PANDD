@@ -3,6 +3,11 @@
 
 Time spent: **50** hours spent in total
 
+
+https://user-images.githubusercontent.com/61529930/174683416-8fbbd310-80be-483c-87a1-d1084e5cb8b9.mp4
+
+
+
 ## Table of Contents
 * Description
 * App evaluation
